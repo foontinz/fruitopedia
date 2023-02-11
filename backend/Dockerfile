@@ -7,10 +7,11 @@ WORKDIR /
 # Copy the application code into the container
 COPY . .
 
+
 # Install the application dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 
 
 # Run the application
-CMD ["uvicorn", "main:app"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
