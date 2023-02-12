@@ -3,6 +3,7 @@ from typing import Any
 
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
+    PROJECT_NAME: str = "Fruitopedia"
 
     POSTGRES_SERVER: str
     POSTGRES_USER: str
@@ -23,3 +24,5 @@ class Settings(BaseSettings):
         )
 
     JWT_ALGORITHM: str = "HS256"
+
+settings = Settings()
