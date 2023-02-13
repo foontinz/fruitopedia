@@ -1,10 +1,12 @@
 from pydantic import BaseModel, EmailStr, validator
 from typing import Any
+import re
 from bcrypt import hashpw, gensalt
 
 class UserBase(BaseModel):
     id: int | None = None
     email: EmailStr | None = None
+    username: str | None = None
     fullname: str | None = None
     hashed_password: str | None = None
     salt: str | None = None   
@@ -23,20 +25,17 @@ class UserMultiRead(UserBase):
 
 class UserCreate(UserBase):
     email: EmailStr
-    fullname: str
-    salt: str | None = None
-    password: str | None = None
-    hashed_password: str | None = None
+    username: str
+    password: str
 
-    @validator('salt', always=True, pre=True)
-    def set_salt(cls, v):
-        return gensalt().decode('utf-8')
-    
+    @validator('password')
+    def validate_password(cls, password):
+        if not re.search(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{8,}$', password):
+            raise ValueError("Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character")
+        return password
+
 
     
-    
-    
-
 class UserDelete(UserBase):
     id: int
     
@@ -50,9 +49,6 @@ class UserStatistics(UserBase):
 class User(UserBase):
     id: int
     email: EmailStr
+    username: str
     fullname: str
     is_superuser: bool
-
-class UserCredentials(UserBase):
-    email: EmailStr
-    password: str
