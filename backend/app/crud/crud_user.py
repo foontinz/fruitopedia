@@ -1,10 +1,12 @@
 from crud.base import CRUDBase
-from models.user import User
-from schemas.user import UserCreate, UserRead, UserMultiRead, UserUpdate, UserDelete
 from sqlalchemy.orm import Session
 
-class CRUDUser(CRUDBase[User, UserCreate, UserRead, UserMultiRead, UserUpdate, UserDelete]):
+from app.models.user import User
+from app.schemas.user import UserCreate, UserRead, UserMultiRead, UserUpdate, UserDelete, UserCredentials
+from app.core.security import verify_password
 
+class CRUDUser(CRUDBase[User, UserCreate, UserRead, UserMultiRead, UserUpdate, UserDelete]):
+    
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
         return super().create(db, obj_in=obj_in)    
 
@@ -20,3 +22,12 @@ class CRUDUser(CRUDBase[User, UserCreate, UserRead, UserMultiRead, UserUpdate, U
     def delete(self, db: Session, *, obj_in: UserDelete) -> User:
         return super().delete(db, obj_in=obj_in)
     
+    def authenticate(self, db: Session, *, obj_in: UserCredentials) -> User:
+        user = db.query(self.model).filter_by(email=obj_in.email).first()
+        if not user:
+            return None
+        if not verify_password(obj_in.password, user.hashed_password, user.salt):
+            return None
+        return user
+    
+user = CRUDUser(User)

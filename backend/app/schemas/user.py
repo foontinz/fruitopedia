@@ -31,7 +31,7 @@ class UserCreate(UserBase):
     
     @validator('hashed_password')
     def create_hashed_password(cls, v, values):
-        return hashpw(values['password'], values['salt'].encode('utf-8'))
+        return hashpw(values['password'].encode('utf-8'), values['salt'].encode('utf-8'))
     
 class UserDelete(UserBase):
     id: int
@@ -42,3 +42,9 @@ class UserUpdate(UserBase):
 
 class UserStatistics(UserBase):
     ...
+
+class User(UserBase):
+    id: int
+    email: EmailStr
+    full_name: str
+    is_superuser: bool
