@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, Body
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
+from app import crud, schemas
+from app.utils.authorization import salt_hash_user_password
 from app.schemas.user import UserCredentials
 from app.api.deps import get_db
 from app.core.config import settings
 from app.core.security import create_access_token
-from app import crud, schemas
 
-from bcrypt import hashpw
 
 router = APIRouter()
 
@@ -35,8 +35,10 @@ async def register(
     db: Session = Depends(get_db), 
     user: schemas.UserCreate = Body(...)):
     
-    user.hashed_password = hashpw(password=user.password.encode('utf-8'), salt=user.salt.encode('utf-8')).decode('utf-8')
-    user.password = None
+    if crud.user.read(db, schemas.UserCreate(email=user.email, username=user.username)):
+        raise HTTPException(status_code=400, detail="Email or Username already registered")
+    
+    user = salt_hash_user_password(user)
     user = crud.user.create(db, obj_in=user)
-    access_token = create_access_token(subject=user.email, admin=user.is_superuser)
+    access_token = create_access_token(user)
     return schemas.Token(access_token=access_token, token_type="bearer")
