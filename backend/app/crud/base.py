@@ -22,7 +22,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, MultiReadSch
     :return: The created record
     '''
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
-        db_obj = self.model(**obj_in.dict(exclude_none=True, exclude={'password'}))
+        db_obj = self.model(**obj_in.dict())
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)

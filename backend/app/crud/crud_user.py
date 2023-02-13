@@ -6,9 +6,9 @@ from app.schemas.user import UserCreate, UserRead, UserMultiRead, UserUpdate, Us
 from app.core.security import verify_password
 
 class CRUDUser(CRUDBase[User, UserCreate, UserRead, UserMultiRead, UserUpdate, UserDelete]):
-    
+
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
-        return super().create(db, obj_in=obj_in)    
+        return super().create(db, obj_in=UserCreate(**obj_in.dict(exclude_none=True, exclude={'password'})))    
 
     def read(self, db: Session, *, obj_in: UserRead) -> User:
         return super().read(db, obj_in=obj_in)
