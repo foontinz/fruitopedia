@@ -25,6 +25,9 @@ async def access_token(
     access_token = create_access_token(subject=user.email, admin=user.is_superuser)
     return schemas.Token({"access_token": access_token, "token_type": "bearer"})
 
+''' POST /login/register
+    This endpoint is used to register a new user and return an access token.
+'''
 @router.post("/register", response_model=schemas.Token)
 async def register(
     db: Session = Depends(get_db), 
