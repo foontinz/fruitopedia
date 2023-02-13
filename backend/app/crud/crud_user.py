@@ -1,7 +1,7 @@
-from crud.base import CRUDBase
 from sqlalchemy.orm import Session
 
 from app.models.user import User
+from app.crud.base import CRUDBase
 from app.schemas.user import UserCreate, UserRead, UserMultiRead, UserUpdate, UserDelete, UserCredentials
 from app.core.security import verify_password
 

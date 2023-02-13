@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from datetime import datetime
 
 class Token(BaseModel):
     access_token: str
@@ -9,4 +9,6 @@ class Token(BaseModel):
 class TokenPayload(BaseModel):
     sub: str | None = None
     admin: bool | None = None
-    exp: int | None = None
+    exp: datetime
+
+    

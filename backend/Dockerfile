@@ -13,4 +13,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 
 # Run the application
-CMD ["uvicorn", "main:app"]
+CMD ["bash", "run_backend.sh"]

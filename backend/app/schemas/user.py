@@ -1,10 +1,11 @@
 from pydantic import BaseModel, EmailStr, validator
+from typing import Any
 from bcrypt import hashpw, gensalt
 
 class UserBase(BaseModel):
     id: int | None = None
     email: EmailStr | None = None
-    full_name: str | None = None
+    fullname: str | None = None
     hashed_password: str | None = None
     salt: str | None = None   
     is_banned: bool = False
@@ -22,17 +23,20 @@ class UserMultiRead(UserBase):
 
 class UserCreate(UserBase):
     email: EmailStr
-    full_name: str
-    password: str
+    fullname: str
+    salt: str | None = None
+    password: str | None = None
+    hashed_password: str | None = None
 
-    @validator('salt')
-    def create_salt(cls, v):
+    @validator('salt', always=True, pre=True)
+    def set_salt(cls, v):
         return gensalt().decode('utf-8')
     
-    @validator('hashed_password')
-    def create_hashed_password(cls, v, values):
-        return hashpw(values['password'].encode('utf-8'), values['salt'].encode('utf-8'))
+
     
+    
+    
+
 class UserDelete(UserBase):
     id: int
     
@@ -46,5 +50,9 @@ class UserStatistics(UserBase):
 class User(UserBase):
     id: int
     email: EmailStr
-    full_name: str
+    fullname: str
     is_superuser: bool
+
+class UserCredentials(UserBase):
+    email: EmailStr
+    password: str
