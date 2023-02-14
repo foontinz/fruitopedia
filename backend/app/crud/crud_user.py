@@ -35,9 +35,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserRead, UserMultiRead, UserUpdate, U
 
     def authenticate(self, db: Session, *, obj_in: UserLoginCredentials) -> User:
         user = self.read_by_identifier(db, obj_in=UserRead(**obj_in.dict(exclude_none=True)))
-        if not user:
-            return None
-        if not verify_password(obj_in.password, user.hashed_password, user.salt):
+        if not user or not verify_password(obj_in.password, user.hashed_password, user.salt):
             return None
         return user
     

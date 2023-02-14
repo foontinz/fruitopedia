@@ -25,7 +25,12 @@ class UserMultiRead(UserBase):
 
 class UserCreate(UserBase):
     ...
-
+class UserDelete(UserBase):
+    id: int
+    
+class UserUpdate(UserBase):
+    #id: int
+    ...
 
 class UserCreateCredentials(BaseModel):
     email: EmailStr
@@ -43,21 +48,13 @@ class UserLoginCredentials(BaseModel):
     email: EmailStr | None = None
     password: str
 
-
-
-class UserDelete(UserBase):
-    id: int
-    
-class UserUpdate(UserBase):
-    #id: int
-    ...
-
-class UserStatistics(UserBase):
-    ...
-
 class User(UserBase):
     id: int
     email: EmailStr
     username: str
     fullname: str
     is_superuser: bool
+
+class UserStatistics(UserBase):
+    ...
+
