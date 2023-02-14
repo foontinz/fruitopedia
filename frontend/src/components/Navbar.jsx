@@ -1,6 +1,6 @@
 import React from 'react';
-import {RxHamburgerMenu} from 'react-icons/rx'
-import {SlClose} from 'react-icons/sl'
+import { RxHamburgerMenu } from 'react-icons/rx'
+import { SlClose } from 'react-icons/sl'
 import { useState, useEffect } from 'react';
 
 const Navbar = () => {
@@ -22,14 +22,14 @@ const Navbar = () => {
             <nav className="bg-[#C7EDE4]">
                 <div className="w-full p-6">
                     <div onClick={() => setOpen(!isOpen)} className='md:hidden'>
-                        {!isOpen && <RxHamburgerMenu color='black'/>}
-                        {isOpen && <SlClose color='black'/>}
+                        {!isOpen && <RxHamburgerMenu color='black' />}
+                        {isOpen && <SlClose color='black' />}
                     </div>
                     <div id='nav' className="hidden md:block">
                         <ul className="flex text-center justify-center flex-col md:flex-row text-[#2D2A32] text-sm font-medium">
                             <li className='md:mx-4 py-4 md:py-0'>
                                 <a href="#" className="hover:underline">
-                                Home
+                                    Home
                                 </a>
                             </li>
                             <li className='md:mx-4 py-4 md:py-0'>

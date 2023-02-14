@@ -15,9 +15,9 @@ const Home = () => {
             From people to people
           </h1>
           <Searchbar></Searchbar>
+        </div>
       </div>
     </div>
-  </div>
   );
 };
 
