@@ -39,7 +39,8 @@ class UserCreateCredentials(BaseModel):
         return password
 
 class UserLoginCredentials(BaseModel):
-    identifier: str
+    username: str | None = None
+    email: EmailStr | None = None
     password: str
 
 
