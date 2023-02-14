@@ -20,7 +20,7 @@ async def access_token(
     db: Session = Depends(get_db), 
     user: schemas.UserLoginCredentials = Body(...)):
     
-    user = crud.user.authenticate(db, user)
+    user = crud.user.authenticate(db, obj_in=user)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     access_token = create_access_token(user)
