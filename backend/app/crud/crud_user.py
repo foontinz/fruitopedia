@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from app.models.user import User
 from app.crud.base import CRUDBase
-from app.schemas.user import UserCreate, UserRead, UserMultiRead, UserUpdate, UserDelete
+from app.schemas.user import UserCreate, UserRead, UserMultiRead, UserUpdate, UserDelete, UserLoginCredentials
 from app.core.security import verify_password
 
 class CRUDUser(CRUDBase[User, UserCreate, UserRead, UserMultiRead, UserUpdate, UserDelete]):
@@ -33,8 +33,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserRead, UserMultiRead, UserUpdate, U
     def read_by_identifier(self, db: Session, *, obj_in: UserRead) -> User:
         return self.read_or(db, obj_in=UserRead(id=obj_in.id, email=obj_in.email, username=obj_in.username))
 
-    def authenticate(self, db: Session, *, obj_in: OAuth2PasswordRequestForm) -> User:
-        user = db.query(self.model).filter_by(email=obj_in.email).first()
+    def authenticate(self, db: Session, *, obj_in: UserLoginCredentials) -> User:
+        user = self.read_by_identifier(db, obj_in=UserRead(username=obj_in.username))
         if not user:
             return None
         if not verify_password(obj_in.password, user.hashed_password, user.salt):
