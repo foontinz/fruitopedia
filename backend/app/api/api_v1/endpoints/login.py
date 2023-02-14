@@ -18,12 +18,12 @@ router = APIRouter()
 @router.post("/access-token", response_model=schemas.Token)
 async def access_token(
     db: Session = Depends(get_db), 
-    form_data: OAuth2PasswordRequestForm = Depends()):
+    user: schemas.UserLoginCredentials = Body(...)):
     
-    user = crud.user.authenticate(db, form_data)
+    user = crud.user.authenticate(db, obj_in=user)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
-    access_token = create_access_token(subject=user.email, admin=user.is_superuser)
+    access_token = create_access_token(user)
     return schemas.Token(access_token=access_token, token_type="bearer")
 
 ''' POST /login/register

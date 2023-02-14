@@ -52,7 +52,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, MultiReadSch
     :param obj_in: The data used to read the record
     :param or_in: The data used to read the record by OR'''
     def read_or(self, db: Session, *, obj_in: ReadSchemaType) -> ModelType:
-        criteries = [getattr(User, k) == v for k, v in obj_in.dict(exclude_unset=True).items()]
+        criteries = [getattr(User, k) == v for k, v in obj_in.dict(exclude_unset=True, exclude_none=True).items()]
         return db.query(self.model).filter(or_(*criteries)).first()
 
     '''Update a record in the database
