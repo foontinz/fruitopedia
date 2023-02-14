@@ -13,4 +13,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 
 # Run the application
-CMD ["bash", "run_backend.sh"]
+CMD ["bash", "server_run.sh"]
