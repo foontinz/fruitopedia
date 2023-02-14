@@ -1,17 +1,19 @@
 from sqlalchemy.orm import Session
+from fastapi.security import OAuth2PasswordRequestForm
 
 from app.models.user import User
 from app.crud.base import CRUDBase
-from app.schemas.user import UserCreate, UserRead, UserMultiRead, UserUpdate, UserDelete, UserCredentials
+from app.schemas.user import UserCreate, UserRead, UserMultiRead, UserUpdate, UserDelete
 from app.core.security import verify_password
 
 class CRUDUser(CRUDBase[User, UserCreate, UserRead, UserMultiRead, UserUpdate, UserDelete]):
-
+    
+    
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
-        return super().create(db, obj_in=UserCreate(**obj_in.dict(exclude_none=True, exclude={'password'})))    
-
+        return super().create(db, obj_in=UserCreate(**obj_in.dict(exclude_none=True, exclude={'password'})))
+    
     def read(self, db: Session, *, obj_in: UserRead) -> User:
-        return super().read(db, obj_in=obj_in)
+        return super().read(db, obj_in=UserRead(**obj_in.dict(exclude_none=True)))
     
     def read_multi(self, db: Session, *, obj_in: UserMultiRead) -> list[User]:
         return super().read_multi(db, obj_in=obj_in)
@@ -22,7 +24,16 @@ class CRUDUser(CRUDBase[User, UserCreate, UserRead, UserMultiRead, UserUpdate, U
     def delete(self, db: Session, *, obj_in: UserDelete) -> User:
         return super().delete(db, obj_in=obj_in)
     
-    def authenticate(self, db: Session, *, obj_in: UserCredentials) -> User:
+    def read_by_email(self, db: Session, *, obj_in: UserRead) -> User:
+        return self.read(db, obj_in=UserRead(email=obj_in.email))
+    
+    def read_by_username(self, db: Session, *, obj_in: UserRead) -> User:
+        return self.read(db, obj_in=UserRead(username=obj_in.username))
+    
+    def read_by_identifier(self, db: Session, *, obj_in: UserRead) -> User:
+        return self.read_or(db, obj_in=UserRead(id=obj_in.id, email=obj_in.email, username=obj_in.username))
+
+    def authenticate(self, db: Session, *, obj_in: OAuth2PasswordRequestForm) -> User:
         user = db.query(self.model).filter_by(email=obj_in.email).first()
         if not user:
             return None
