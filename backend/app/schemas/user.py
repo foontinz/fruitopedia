@@ -17,15 +17,17 @@ class UserBase(BaseModel):
         orm_mode = True
 
 class UserRead(UserBase):
-    id: int
+    ...
     
 class UserMultiRead(UserBase):
     skip: int = 0
     limit: int = 100
 
 class UserCreate(UserBase):
-    email: EmailStr
-    username: str
+    ...
+
+
+class UserCreateCredentials(UserCreate):
     password: str
 
     @validator('password')
@@ -34,8 +36,6 @@ class UserCreate(UserBase):
             raise ValueError("Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character")
         return password
 
-
-    
 class UserDelete(UserBase):
     id: int
     
