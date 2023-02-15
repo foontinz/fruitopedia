@@ -1,6 +1,7 @@
 import React from 'react'
 import Searchbar from './Searchbar';
 import Navbar from './Navbar';
+import Globe from './Globe'
 
 const Home = () => {
   return (
@@ -14,6 +15,7 @@ const Home = () => {
           <h1 className='text-[10px] md:text-[10px] md:mt-2'>
             From people to people
           </h1>
+          <Globe></Globe>
           <Searchbar></Searchbar>
         </div>
       </div>
