@@ -22,7 +22,7 @@ async def access_token(
     
     user = crud.user.authenticate(db, obj_in=user)
     if not user:
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
+        raise HTTPException(status_code=400, detail="Incorrect email or password") #TODO change message
     access_token = create_access_token(user)
     return schemas.Token(access_token=access_token, token_type="bearer")
 
