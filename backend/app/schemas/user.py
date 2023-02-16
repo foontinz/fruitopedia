@@ -34,7 +34,7 @@ class UserUpdate(UserBase):
 
 class UserCreateCredentials(BaseModel):
     email: EmailStr
-    username: str
+    username: str #TODO add validator (codec)
     password: str
 
     @validator('password')
