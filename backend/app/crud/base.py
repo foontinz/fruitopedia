@@ -35,8 +35,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, MultiReadSch
     :param obj_in: The data used to read the record
     :return: The read record
     '''
-    def read(self, db: Session, *, obj_in: ReadSchemaType) -> ModelType:
-        return db.query(self.model).filter_by(**obj_in.dict()).first()
+    def read(self, db: Session, *, obj_in: ReadSchemaType) -> ModelType | None:
+        return db.query(self.model).filter_by(**obj_in.dict(exclude_unset=True, exclude_defaults=True)).first()
         
 
     '''Read multiple records from the database
@@ -51,7 +51,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, MultiReadSch
     :param db: The database session
     :param obj_in: The data used to read the record
     :param or_in: The data used to read the record by OR'''
-    def read_or(self, db: Session, *, obj_in: ReadSchemaType) -> ModelType:
+    def read_or(self, db: Session, *, obj_in: ReadSchemaType) -> ModelType | None:
         criteries = [getattr(User, k) == v for k, v in obj_in.dict(exclude_unset=True, exclude_none=True).items()]
         return db.query(self.model).filter(or_(*criteries)).first()
 
@@ -60,9 +60,11 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, MultiReadSch
     :param obj_in: The data used to update the record
     :return: The updated record
     '''
-    def update(self, db: Session, *, obj_in: UpdateSchemaType) -> ModelType:
-        db_obj = db.query(self.model).get(obj_in.id)
-        db_obj.update(obj_in.dict(exclude_unset=True)) 
+    def update(self, db: Session, *, obj_in: UpdateSchemaType) -> ModelType | None:
+        db_obj = db.query(self.model).filter_by(**obj_in.obj_to_update.dict()).first()
+        if not db_obj:
+            return None
+        db_obj.update(obj_in.update_to_obj.dict(exclude_unset=True)) 
         db.commit()
         db.refresh(db_obj)
         return db_obj
@@ -72,8 +74,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, MultiReadSch
     :param obj_in: The data used to delete the record
     :return: The deleted record
     '''
-    def delete(self, db: Session, *, obj_in: DeleteSchemaType) -> ModelType:
+    def delete(self, db: Session, *, obj_in: DeleteSchemaType) -> ModelType | None:
         obj = db.query(self.model).filter_by(**obj_in.dict()).first()
+        if not obj:
+            return None
         db.delete(obj)
         db.commit()
         return obj
