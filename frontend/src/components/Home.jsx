@@ -15,8 +15,8 @@ const Home = () => {
           <h1 className='text-[10px] md:text-[10px] md:mt-2'>
             From people to people
           </h1>
-          <Globe></Globe>
           <Searchbar></Searchbar>
+          <Globe></Globe>
         </div>
       </div>
     </div>
