@@ -27,4 +27,4 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - 5050:5050
+      - 80:6060
