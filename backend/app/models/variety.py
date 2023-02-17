@@ -16,7 +16,7 @@ class Variety(Base):
     fruit: Mapped["Fruit"] = relationship('Fruit', back_populates='varieties')
 
     origin_countries: Mapped[list["Country"]] = relationship(
-        'Country', secondary='country_varie', back_populates='own_varieties')
+        'Country', secondary='country_variety', back_populates='own_varieties')
     
     def __repr__(self):
         return f'<Variety {self.name}, fruit {self.fruit.name}`>'
