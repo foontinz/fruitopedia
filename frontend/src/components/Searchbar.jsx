@@ -65,6 +65,7 @@ const Searchbar = () => {
 
         li.id = "suggestion"
         li.innerHTML = res
+        li.className = "h-[30px] pl-[5px] w-[250px] md:w-[400px] hover:bg-blue-500 hover:rounded-md"
 
         ul.appendChild(li)
       } else {
