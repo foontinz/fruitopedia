@@ -1,5 +1,4 @@
 import React from 'react'
-import './Searchbar.css'
 import { FcSearch } from 'react-icons/fc'
 
 let data = [
