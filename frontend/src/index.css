@@ -3,9 +3,6 @@
 @tailwind utilities;
 
 
-@import url('https://fonts.googleapis.com/css2?family=Julee&family=Montserrat:wght@300&family=Roboto+Mono:wght@700&display=swap');
-
-
 body {
     background-color: #E8EEF2;
     font-family: 'Julee', cursive;
