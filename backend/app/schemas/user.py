@@ -20,21 +20,18 @@ class UserCreate(UserInDB):
     is_banned: bool = False
     is_superuser: bool = False
 
-    ...
-
 class UserRead(UserBase):
     email: EmailStr | None = None
     username: str | None = None 
     fullname: str | None = None
     is_banned: bool | None = None
     is_superuser: bool | None = None
-    ...
+    
     
 class UserMultiRead(BaseModel):
     skip: int = 0
     limit: int = 100
     read_criterias: UserRead
-
 
 class UserUpdate(BaseModel):
     obj_to_update: UserRead
