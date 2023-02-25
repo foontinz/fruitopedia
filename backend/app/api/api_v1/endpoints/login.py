@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
-from app.utils.authorization import salt_hash_user_password
+from app.utils.authorization import UserCredentials_to_UserCreate
 from app.api.deps import get_db
 from app.core.config import settings
 from app.core.security import create_access_token
@@ -22,7 +22,7 @@ async def access_token(
     
     user = crud.user.authenticate(db, obj_in=user)
     if not user:
-        raise HTTPException(status_code=400, detail="Incorrect email or password") #TODO change message
+        raise HTTPException(status_code=400, detail="Incorrect login or password") 
     access_token = create_access_token(user)
     return schemas.Token(access_token=access_token, token_type="bearer")
 
@@ -34,10 +34,14 @@ async def register(
     db: Session = Depends(get_db), 
     user: schemas.UserCreateCredentials = Body(...)):
     
-    if crud.user.read_by_identifier(db, obj_in=schemas.UserRead(**user.dict(exclude_none=True))):
-        raise HTTPException(status_code=400, detail="Email or Username already registered")
+    if crud.user.read_by_email(db, email=user.email) \
+        or crud.user.read_by_username(db, username=user.username):
+        raise HTTPException(status_code=400, detail="User is already exist")
     
-    user = salt_hash_user_password(user)
-    user = crud.user.create(db, obj_in=schemas.UserCreate(**user.dict(exclude_none=True)))
+    user = UserCredentials_to_UserCreate(user)
+    user = crud.user.create(db, obj_in=user)
+    if not user:
+        raise HTTPException(status_code=400, detail="Error while creating user")
+    
     access_token = create_access_token(user)
     return schemas.Token(access_token=access_token, token_type="bearer")
