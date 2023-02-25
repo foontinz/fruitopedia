@@ -7,8 +7,8 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 class Fruit(Base):
     __tablename__ = 'fruit'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column()
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(unique=True, index=True)
     description: Mapped[str] = mapped_column(nullable=True)
 
     varieties: Mapped[list["Variety"]] = relationship(
