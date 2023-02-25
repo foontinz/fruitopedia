@@ -47,13 +47,13 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, MultiReadSch
     def read_multi(self, db: Session, *, obj_in: MultiReadSchemaType) -> list[ModelType]:
         return db.query(self.model).filter_by(**obj_in.dict()).offset(obj_in.skip).limit(obj_in.limit).all()
 
-    '''Read a record from the database by OR(at least 1 fits ) fields from the schema 
-    :param db: The database session
-    :param obj_in: The data used to read the record
-    :param or_in: The data used to read the record by OR'''
-    def read_or(self, db: Session, *, obj_in: ReadSchemaType) -> ModelType | None:
-        criteries = [getattr(User, k) == v for k, v in obj_in.dict(exclude_unset=True, exclude_none=True).items()]
-        return db.query(self.model).filter(or_(*criteries)).first()
+    # '''Read a record from the database by OR(at least 1 fits ) fields from the schema 
+    # :param db: The database session
+    # :param obj_in: The data used to read the record
+    # :param or_in: The data used to read the record by OR'''
+    # def read_or(self, db: Session, *, obj_in: ReadSchemaType) -> ModelType | None:
+    #     criteries = [getattr(User, k) == v for k, v in obj_in.dict(exclude_unset=True, exclude_none=True).items()]
+    #     return db.query(self.model).filter(or_(*criteries)).first()
 
     '''Update a record in the database
     :param db: The database session
