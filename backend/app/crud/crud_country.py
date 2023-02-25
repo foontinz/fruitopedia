@@ -13,8 +13,8 @@ class CRUDCountry(CRUDBase[Country, CountryCreate, CountryRead, CountryMultiRead
     def read(self, db: Session, *, obj_in: CountryRead) -> Country | None:
         return super().read(db, obj_in=obj_in)
     
-    def read_multi(self, db: Session, *, obj_in: CountryMultiRead) -> list[Country]:
-        return super().read_multi(db, obj_in=obj_in)
+    def read_all(self, db: Session, *, obj_in: CountryMultiRead) -> list[Country]:
+        return super().read_all(db, obj_in=obj_in)
     
     def update(self, db: Session, *, obj_in: CountryUpdate) -> Country | None:
         if self.are_varieties_exist(db, obj_in=obj_in.update_to_obj.own_varieties):
