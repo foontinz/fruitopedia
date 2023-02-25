@@ -28,32 +28,32 @@ const Navbar = () => {
                     <div id='nav' className="hidden md:block">
                         <ul className="flex text-center justify-center flex-col md:flex-row text-[#2D2A32] text-sm font-medium">
                             <li className='md:mx-4 py-4 md:py-0'>
-                                <a href="#" className="hover:underline">
+                                <a href="/" className="hover:underline">
                                     Home
                                 </a>
                             </li>
                             <li className='md:mx-4 py-4 md:py-0'>
-                                <a href="#" className="hover:underline">
+                                <a href="/" className="hover:underline">
                                     Articles
                                 </a>
                             </li>
                             <li className='md:mx-4 py-4 md:py-0'>
-                                <a href="#" className="hover:underline">
+                                <a href="about" className="hover:underline">
                                     About
                                 </a>
                             </li>
                             <li className='md:mx-4 py-4 md:py-0'>
-                                <a href="#" className="hover:underline">
+                                <a href="/" className="hover:underline">
                                     FAQ
                                 </a>
                             </li>
                             <li className='md:mx-4 py-4 md:py-0'>
-                                <a href="#" className="hover:underline">
+                                <a href="/" className="hover:underline">
                                     Contact
                                 </a>
                             </li>
                             <li className='md:mx-4 py-4 md:py-0'>
-                                <a href="#" className="hover:underline">
+                                <a href="/" className="hover:underline">
                                     Support
                                 </a>
                             </li>
