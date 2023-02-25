@@ -10,6 +10,7 @@ class Country(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column()
     iso_code: Mapped[str] = mapped_column()
+    description: Mapped[str] = mapped_column(nullable=True)
 
     own_varieties: Mapped[list["Variety"]] = relationship(
         'Variety', secondary='country_variety', back_populates='origin_countries')
