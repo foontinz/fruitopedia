@@ -5,26 +5,10 @@ from sqlalchemy.orm import Session
 from app import crud, schemas
 from app.utils.authorization import UserCredentials_to_UserCreate
 from app.api.deps import get_db
-from app.core.config import settings
 from app.core.security import create_access_token
 
 
 router = APIRouter()
-
-
-''' POST /login/access-token
-    This endpoint is used to authenticate a user and return an access token.
-'''
-@router.post("/access-token", response_model=schemas.Token)
-async def access_token(
-    db: Session = Depends(get_db), 
-    user: schemas.UserLoginCredentials = Body(...)):
-    
-    user = crud.user.authenticate(db, obj_in=user)
-    if not user:
-        raise HTTPException(status_code=400, detail="Incorrect login or password") 
-    access_token = create_access_token(user)
-    return schemas.Token(access_token=access_token, token_type="bearer")
 
 ''' POST /login/register
     This endpoint is used to register a new user and return an access token.
@@ -43,5 +27,19 @@ async def register(
     if not user:
         raise HTTPException(status_code=400, detail="Error while creating user")
     
+    access_token = create_access_token(user)
+    return schemas.Token(access_token=access_token, token_type="bearer")
+
+''' POST /login/
+    This endpoint is used to authenticate a user and return an access token.
+'''
+@router.post("/", response_model=schemas.Token)
+async def login(
+    db: Session = Depends(get_db), 
+    user: schemas.UserLoginCredentials = Body(...)):
+    
+    user = crud.user.authenticate(db, obj_in=user)
+    if not user:
+        raise HTTPException(status_code=400, detail="Incorrect login or password") 
     access_token = create_access_token(user)
     return schemas.Token(access_token=access_token, token_type="bearer")
