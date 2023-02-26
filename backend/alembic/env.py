@@ -5,14 +5,12 @@ from sqlalchemy import pool
 
 from alembic import context
 from os import environ
-from dotenv import load_dotenv
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-
-load_dotenv() # comment for deploy
 config.set_main_option('sqlalchemy.url', environ.get('SQLALCHEMY_DATABASE_URI'))
 
 # Interpret the config file for Python logging.
