@@ -1,7 +1,6 @@
 from typing import Generic, TypeVar, Type
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
-from app.models import User
+from copy import copy
 from app.db.base_class import Base
 from pydantic import BaseModel
 
@@ -76,10 +75,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, ReadAllSchem
     :param obj_in: The data used to delete the record
     :return: The deleted record
     '''
-    def delete(self, db: Session, *, obj_in: DeleteSchemaType) -> ModelType | None:
+    def delete(self, db: Session, *, obj_in: DeleteSchemaType) -> None:
         obj = db.query(self.model).filter(self.model.id == obj_in.id).first()
-        if not obj:
-            return None
         db.delete(obj)
         db.commit()
-        return obj
+        return None

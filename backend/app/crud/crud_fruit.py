@@ -24,12 +24,6 @@ class CRUDFruit(CRUDBase[Fruit, FruitCreate, FruitRead, FruitMultiRead, FruitUpd
     def delete(self, db: Session, *, obj_in: FruitDelete) -> Fruit | None:
         return super().delete(db, obj_in=obj_in)
     
-    def are_varieties_exist(self, db: Session, *, obj_in:list[Variety]) -> bool:
-        for variety in obj_in:
-            if not db.query(Variety).filter_by(id=variety.id).first():
-                return False
-        return True
-    
     def read_by_name(self, db: Session, *, name: fruitName) -> Fruit | None:
         return db.query(Fruit).filter(self.model.name == name).first()
     
