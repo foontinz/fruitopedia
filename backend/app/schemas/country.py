@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from app.models import Variety
 
 class CountryBase(BaseModel):
@@ -42,6 +42,12 @@ class CountryRequestBody(BaseModel):
     description: str | None = None
     own_varieties: list[int] = []
 
+    @validator('iso_code')
+    def iso_code_must_be_3_chars(cls, v):
+        if len(v) != 3:
+            raise ValueError('iso_code must be 3 characters long')
+        return v
+    
 class CountryResponseBody(CountryBase):
     name: str
     iso_code: str
