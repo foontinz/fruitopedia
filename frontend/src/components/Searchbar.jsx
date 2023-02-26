@@ -18,6 +18,8 @@ let fruitData = [
 ]
 
 const Searchbar = (props) => {
+  const [searchInput, setSearchInput] = useState("")
+
   function findMatch(input, element) {
     if (input.length == 0) {
       return null // no input
@@ -53,7 +55,11 @@ const Searchbar = (props) => {
         li.className = "h-[30px] pl-[5px] w-[250px] md:w-[400px] hover:bg-blue-500 hover:rounded-md"
         li.addEventListener("click", (e) => {
           let id = e.target.dataset.fruitId
-          console.log("fruitId: "+ id)
+          event.target.value = res
+
+          let allLi = document.querySelectorAll("#suggestions-bar li")
+          allLi.forEach(e => e.remove()) // clear all li
+
           props.onFruitSelected(fruitData.find((el) => el.id == id))
         })
 
