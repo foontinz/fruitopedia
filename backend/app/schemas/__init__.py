@@ -13,4 +13,5 @@ from .fruit import (
     FruitRequestBody, FruitResponseBody )
 
 from .variety import (
-    VarietyInDB, VarietyCreate, VarietyRead, VarietyMultiRead, VarietyUpdate, VarietyDelete )
+    VarietyInDB, VarietyCreate, VarietyRead, VarietyMultiRead, VarietyUpdate, VarietyDelete,
+    VarietyRequestBody, VarietyResponseBody)

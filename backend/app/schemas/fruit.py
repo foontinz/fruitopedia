@@ -10,7 +10,7 @@ class FruitBase(BaseModel):
 
 class FruitInDB(FruitBase):
     name: str
-    description: str | None = None
+    description: str | None 
     varieties: list[Variety]
 
 class FruitCreate(FruitBase):
