@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Body
+from fastapi import APIRouter, Depends, HTTPException, Body, status
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
@@ -9,7 +9,7 @@ from app.utils.convertion_misc import FruitModel_to_FruitResponseBody
 router = APIRouter()
 
 ''' GET /fruit/{id}'''
-@router.get("/{id}", response_model=schemas.FruitResponseBody)
+@router.get("/{id}", response_model=schemas.FruitResponseBody, status_code=status.HTTP_200_OK)
 async def read_fruit(
     id: int,
     db: Session = Depends(get_db)):
@@ -21,7 +21,7 @@ async def read_fruit(
     return FruitModel_to_FruitResponseBody(fruit)
 
 ''' PUT /fruit/{id}'''
-@router.put("/{id}", response_model=schemas.FruitResponseBody)
+@router.put("/{id}", response_model=schemas.FruitResponseBody, status_code=status.HTTP_200_OK)
 async def update_fruit(
     id: int,
     fruit_body: schemas.FruitRequestBody = Body(...),
@@ -38,19 +38,16 @@ async def update_fruit(
     return FruitModel_to_FruitResponseBody(fruit)
 
 ''' DELETE /fruit/{id}'''
-@router.delete("/{id}", response_model=schemas.FruitResponseBody)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_fruit(
     id: int,
     db: Session = Depends(get_db)):
     
-    fruit = crud.fruit.delete(db, obj_in=schemas.FruitDelete(id=id))
-    if not fruit:
-        raise HTTPException(status_code=400, detail="Error while deleting fruit")
+    crud.fruit.delete(db, obj_in=schemas.FruitDelete(id=id))
     
-    return FruitModel_to_FruitResponseBody(fruit)
 
 ''' POST /fruit/'''
-@router.post("/", response_model=schemas.FruitResponseBody)
+@router.post("/", response_model=schemas.FruitResponseBody, status_code=status.HTTP_201_CREATED)
 async def create_fruit(
     fruit_body: schemas.FruitRequestBody = Body(...),
     db: Session = Depends(get_db)):

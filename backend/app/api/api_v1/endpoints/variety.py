@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Body
+from fastapi import APIRouter, Depends, HTTPException, Body, status
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
@@ -8,7 +8,7 @@ from app.utils.convertion_misc import VarietyModel_to_VarietyResponseBody
 router = APIRouter()
 
 ''' GET /variety/{id}'''
-@router.get("/{id}", response_model=schemas.VarietyResponseBody)
+@router.get("/{id}", response_model=schemas.VarietyResponseBody, status_code=status.HTTP_200_OK)
 async def read_variety(
     id: int,
     db: Session = Depends(get_db)):
@@ -20,7 +20,7 @@ async def read_variety(
     return VarietyModel_to_VarietyResponseBody(variety)
 
 ''' PUT /variety/{id}'''
-@router.put("/{id}", response_model=schemas.VarietyResponseBody)
+@router.put("/{id}", response_model=schemas.VarietyResponseBody, status_code=status.HTTP_200_OK)
 async def update_variety(
     id: int,
     variety_body: schemas.VarietyRequestBody = Body(...),
@@ -37,19 +37,20 @@ async def update_variety(
     return VarietyModel_to_VarietyResponseBody(variety)
 
 ''' Delete /variety/{id}'''
-@router.delete("/{id}", response_model=schemas.VarietyResponseBody)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_variety(
     id: int,
     db: Session = Depends(get_db)):
+
+
+    if not crud.variety.read(db, obj_in=schemas.VarietyRead(id=id)):
+        raise HTTPException(status_code=404, detail="Variety not found")
     
-    variety = crud.variety.delete(db, obj_in=schemas.VarietyDelete(id=id))
-    if not variety:
-        raise HTTPException(status_code=400, detail="Error while deleting variety")
+    crud.variety.delete(db, obj_in=schemas.VarietyDelete(id=id))
     
-    return VarietyModel_to_VarietyResponseBody(variety)
 
 ''' POST /variety/'''
-@router.post("/", response_model=schemas.VarietyResponseBody)
+@router.post("/", response_model=schemas.VarietyResponseBody, status_code=status.HTTP_201_CREATED)
 async def create_variety(
     variety_body: schemas.VarietyRequestBody = Body(...),
     db: Session = Depends(get_db)):
