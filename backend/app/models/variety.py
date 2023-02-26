@@ -12,7 +12,7 @@ class Variety(Base):
 
     fruit_id: Mapped[int] = mapped_column(ForeignKey('fruit.id'))
     fruit: Mapped["Fruit"] = relationship('Fruit', back_populates='varieties')
-    decription: Mapped[str] = mapped_column(nullable=True)
+    description: Mapped[str] = mapped_column(nullable=True)
 
     origin_countries: Mapped[list["Country"]] = relationship(
         'Country', secondary='country_variety', back_populates='own_varieties')
