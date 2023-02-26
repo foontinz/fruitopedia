@@ -15,7 +15,6 @@ services:
     depends_on:
       - db
   pgadmin:
-    container_name: pgadmin
     image: dpage/pgadmin4
     environment:
       - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin.org
@@ -27,4 +26,4 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - 80:6060
+      - 6060:6060
