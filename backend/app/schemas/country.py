@@ -1,22 +1,20 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from app.models import Variety
 
 class CountryBase(BaseModel):
-    id: int 
+    id: int | None = None
 
     class Config:
         orm_mode = True
         arbitrary_types_allowed = True
         
-
-
 class CountryInDB(CountryBase):
     name: str
     iso_code: str
-    description: str | None 
+    description: str | None = None
     own_varieties: list[Variety]
 
-class CountryCreate(CountryInDB):
+class CountryCreate(CountryBase):
     name: str
     iso_code: str
     description: str | None = None
@@ -30,11 +28,28 @@ class CountryRead(CountryBase):
 class CountryMultiRead(BaseModel):
     skip: int = 0
     limit: int = 100
-    read_criterias: CountryRead
 
 class CountryUpdate(CountryBase):
-    obj_to_update: CountryRead
+    id: int
     update_to_obj: CountryCreate
 
 class CountryDelete(CountryBase):
-    obj_to_delete: CountryRead
+    id: int
+
+class CountryRequestBody(BaseModel):
+    name: str
+    iso_code: str
+    description: str | None = None
+    own_varieties: list[int] = []
+
+    @validator('iso_code')
+    def iso_code_must_be_3_chars(cls, v):
+        if len(v) != 3:
+            raise ValueError('iso_code must be 3 characters long')
+        return v
+    
+class CountryResponseBody(CountryBase):
+    name: str
+    iso_code: str
+    description: str | None = None
+    own_varieties: list[int] = []

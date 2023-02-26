@@ -9,7 +9,7 @@ class Country(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column()
-    iso_code: Mapped[str] = mapped_column()
+    iso_code: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str] = mapped_column(nullable=True)
 
     own_varieties: Mapped[list["Variety"]] = relationship(
