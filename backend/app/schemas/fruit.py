@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from app.models import Variety 
 
 class FruitBase(BaseModel):
-    id: int 
+    id: int | None = None
 
     class Config:
         orm_mode = True
@@ -19,17 +19,25 @@ class FruitCreate(FruitBase):
     varieties: list[Variety] = []
 
 class FruitRead(FruitBase):
-    id: int | None = None
-    name: str | None = None
-
+    id: int 
+    
 class FruitMultiRead(BaseModel):
     skip: int = 0
     limit: int = 100
-    read_criterias: FruitRead
 
 class FruitUpdate(FruitBase):
-    obj_to_update: FruitRead
+    id: int
     update_to_obj: FruitCreate
 
 class FruitDelete(FruitBase):
-    obj_to_delete: FruitRead
+    id: int
+
+class FruitRequestBody(BaseModel):
+    name: str
+    description: str | None = None
+    varieties: list[int] = []
+
+class FruitResponseBody(FruitBase):
+    name: str
+    description: str | None = None
+    varieties: list[int] = []
