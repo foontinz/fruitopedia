@@ -12,7 +12,6 @@ const Navbar = () => {
         console.log(`open: ${isOpen}`)
     }
 
-    // useEffect allows to call function after rendering DOM
     useEffect(() => {
         toggleShrink()
     })
