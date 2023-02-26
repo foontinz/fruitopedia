@@ -9,9 +9,10 @@ COPY . .
 
 
 # Install the application dependencies
+RUN apt-get update && apt-get install -y dos2unix
 RUN pip install --no-cache-dir -r requirements.txt
-
+RUN dos2unix server_run.bash
 
 
 # Run the application
-CMD ["bash", "server_run.sh"]
+CMD ["bash", "server_run.bash", "deploy"]
