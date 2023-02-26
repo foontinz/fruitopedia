@@ -15,31 +15,29 @@ class UserInDB(UserBase):
     is_banned: bool
     is_superuser: bool
 
-class UserCreate(UserInDB):
+class UserCreate(BaseModel):
+    email: EmailStr
+    username: str
     fullname: str = None
+    hashed_password: str
+    salt: str
     is_banned: bool = False
     is_superuser: bool = False
 
 class UserRead(UserBase):
-    email: EmailStr | None = None
-    username: str | None = None 
-    fullname: str | None = None
-    is_banned: bool | None = None
-    is_superuser: bool | None = None
-    
+    id: int 
     
 class UserMultiRead(BaseModel):
     skip: int = 0
     limit: int = 100
-    read_criterias: UserRead
 
-class UserUpdate(BaseModel):
-    obj_to_update: UserRead
+class UserUpdate(UserBase):
+    id: int 
     update_to_obj: UserCreate
 
 
-class UserDelete(BaseModel):
-    obj_to_delete: UserRead
+class UserDelete(UserBase):
+    id: int
     
 class UserCreateCredentials(BaseModel):
     email: EmailStr
@@ -69,14 +67,4 @@ class UserLoginCredentials(UserCreateCredentials):
     username: str | None = None
     email: EmailStr | None = None
 
-
-class User(UserBase):
-    id: int
-    email: EmailStr
-    username: str
-    fullname: str
-    is_superuser: bool
-
-class UserStatistics(UserBase):
-    ... 
 
