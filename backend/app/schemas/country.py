@@ -1,5 +1,7 @@
 from pydantic import BaseModel, validator
+
 from app.models import Variety
+from app.schemas.commons import MultiReadQueryParams
 
 class CountryBase(BaseModel):
     id: int | None = None
@@ -25,9 +27,11 @@ class CountryRead(CountryBase):
     iso_code: str | None = None
 
 
-class CountryMultiRead(BaseModel):
-    skip: int = 0
-    limit: int = 100
+class CountryMultiRead(MultiReadQueryParams):
+    ...
+
+class CountryMultiReadByFruit(CountryMultiRead):
+    fruit_id: int
 
 class CountryUpdate(CountryBase):
     id: int
@@ -51,5 +55,9 @@ class CountryRequestBody(BaseModel):
 class CountryResponseBody(CountryBase):
     name: str
     iso_code: str
-    description: str | None = None
+    description: str | None 
     own_varieties: list[int] = []
+
+
+class CountryMultiResponseBody(BaseModel):
+    countries: list[CountryResponseBody]

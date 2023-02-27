@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+
+from app.schemas.commons import MultiReadQueryParams
 from app.models import Variety 
 
 class FruitBase(BaseModel):
@@ -21,9 +23,11 @@ class FruitCreate(FruitBase):
 class FruitRead(FruitBase):
     id: int 
     
-class FruitMultiRead(BaseModel):
-    skip: int = 0
-    limit: int = 100
+class FruitMultiRead(MultiReadQueryParams):
+    ...
+
+class FruitMultiReadByCountry(FruitMultiRead):
+    country_id: int
 
 class FruitUpdate(FruitBase):
     id: int
@@ -39,5 +43,9 @@ class FruitRequestBody(BaseModel):
 
 class FruitResponseBody(FruitBase):
     name: str
-    description: str | None = None
+    description: str | None 
     varieties: list[int] = []
+
+class FruitMultiResponseBody(BaseModel):
+    fruits: list[FruitResponseBody]
+
