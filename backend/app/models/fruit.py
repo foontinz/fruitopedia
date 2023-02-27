@@ -1,8 +1,6 @@
 from app.db.base_class import Base
-from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
-# from .variety import Variety
 
 class Fruit(Base):
     __tablename__ = 'fruit'

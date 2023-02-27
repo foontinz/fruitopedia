@@ -1,8 +1,6 @@
 from app.db.base_class import Base 
-from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
-# from .variety import Variety
 
 class Country(Base):
     __tablename__ = 'country'
@@ -11,6 +9,7 @@ class Country(Base):
     name: Mapped[str] = mapped_column()
     iso_code: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str] = mapped_column(nullable=True)
+
 
     own_varieties: Mapped[list["Variety"]] = relationship(
         'Variety', secondary='country_variety', back_populates='origin_countries')
