@@ -15,8 +15,8 @@ class CRUDVariety(CRUDBase[Variety, VarietyCreate, VarietyRead, VarietyMultiRead
     def read(self, db: Session, *, obj_in: VarietyRead) -> Variety | None:
         return super().read(db, obj_in=obj_in)
     
-    def read_all(self, db: Session, *, obj_in: VarietyMultiRead) -> list[Variety]:
-        return super().read_all(db, obj_in=obj_in)
+    def read_multi(self, db: Session, *, obj_in: VarietyMultiRead) -> list[Variety]:
+        return super().read_multi(db, obj_in=obj_in)
     
     def update(self, db: Session, *, obj_in: VarietyUpdate) -> Variety | None:
         return super().update(db, obj_in=obj_in)

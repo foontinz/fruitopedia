@@ -19,8 +19,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserRead, UserMultiRead, UserUpdate, U
     def read(self, db: Session, *, obj_in: UserRead) -> User | None:
         return super().read(db, obj_in=obj_in)
     
-    def read_all(self, db: Session, *, obj_in: UserMultiRead) -> list[User]:
-        return super().read_all(db, obj_in=obj_in)
+    def read_multi(self, db: Session, *, obj_in: UserMultiRead) -> list[User]:
+        return super().read_multi(db, obj_in=obj_in)
     
     def update(self, db: Session, *, obj_in: UserUpdate) -> User | None:
         return super().update(db, obj_in=obj_in)

@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 from typing import TypeVar
 
-from app.models import Fruit, Variety
+from app.models import Fruit, Variety, Country
 from app.crud.base import CRUDBase
-from app.schemas.fruit import FruitCreate, FruitUpdate, FruitRead, FruitMultiRead, FruitDelete, FruitRequestBody, FruitResponseBody
+from app.schemas.fruit import FruitCreate, FruitUpdate, FruitRead, FruitMultiRead, FruitDelete, FruitRequestBody, FruitMultiReadByCountry
 
 fruitName = TypeVar('fruitName', bound=str)
 
@@ -15,8 +15,15 @@ class CRUDFruit(CRUDBase[Fruit, FruitCreate, FruitRead, FruitMultiRead, FruitUpd
     def read(self, db: Session, *, obj_in: FruitRead) -> Fruit | None:
         return super().read(db, obj_in=obj_in)
     
-    def read_all(self, db: Session, *, obj_in: FruitMultiRead) -> list[Fruit]:
-        return super().read_all(db, obj_in=obj_in)
+    def read_multi(self, db: Session, *, obj_in: FruitMultiRead) -> list[Fruit]:
+        return super().read_multi(db, obj_in=obj_in)
+    
+    def read_multi_by_country_id(self, db: Session, *, obj_in: FruitMultiReadByCountry) -> list[Fruit]:
+        country = db.query(Country).filter(Country.id == obj_in.country_id).first()
+        if not country:
+            return []
+        fruits = set([variety.fruit for variety in country.own_varieties][obj_in.skip:obj_in.limit])
+        return list(fruits)
     
     def update(self, db: Session, *, obj_in: FruitUpdate) -> Fruit | None:
         return super().update(db, obj_in=obj_in)        
@@ -27,13 +34,13 @@ class CRUDFruit(CRUDBase[Fruit, FruitCreate, FruitRead, FruitMultiRead, FruitUpd
     def read_by_name(self, db: Session, *, name: fruitName) -> Fruit | None:
         return db.query(Fruit).filter(self.model.name == name).first()
     
+
     def FruitRequestBody_to_FruitCreate(self, db: Session, *, fruit_body: FruitRequestBody) -> FruitCreate | None:
         varieties = [db.query(Variety).filter(Variety.id == variety_id).first() for variety_id in fruit_body.varieties]
 
         if not all(varieties):
             return None
         
-
         return FruitCreate(
             name=fruit_body.name,
             description=fruit_body.description,

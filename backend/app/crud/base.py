@@ -44,7 +44,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, ReadAllSchem
     :param limit: The number of records to return
     :return: The read records
     '''
-    def read_all(self, db: Session, *, obj_in: ReadAllSchemaType) -> list[ModelType]:
+    def read_multi(self, db: Session, *, obj_in: ReadAllSchemaType) -> list[ModelType]:
         return db.query(self.model).offset(obj_in.skip).limit(obj_in.limit).all()
 
     # '''Read a record from the database by OR(at least 1 fits ) fields from the schema 
