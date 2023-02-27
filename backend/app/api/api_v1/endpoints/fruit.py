@@ -8,20 +8,31 @@ from app.utils.convertion_misc import FruitModel_to_FruitResponseBody
 
 router = APIRouter()
 
+''' GET /fruit/country/{id}'''
+@router.get("/country/{id}", response_model=schemas.FruitMultiResponseBody, response_model_exclude_unset=True, status_code=status.HTTP_200_OK)
+async def read_fruits_by_country(
+    id: int,
+    params: schemas.MultiReadQueryParams = Depends(),
+    db: Session = Depends(get_db)):
+    
+    fruits = crud.fruit.read_multi_by_country_id(db, obj_in=schemas.FruitMultiReadByCountry(country_id=id, **params.dict()))
+    return schemas.FruitMultiResponseBody(fruits=[FruitModel_to_FruitResponseBody(fruit, detailed=params.detailed) for fruit in fruits])
+
 ''' GET /fruit/{id}'''
-@router.get("/{id}", response_model=schemas.FruitResponseBody, status_code=status.HTTP_200_OK)
+@router.get("/{id}", response_model=schemas.FruitResponseBody, response_model_exclude_unset=True, status_code=status.HTTP_200_OK)
 async def read_fruit(
     id: int,
+    detailed: bool = False,
     db: Session = Depends(get_db)):
     
     fruit = crud.fruit.read(db, obj_in=schemas.FruitRead(id=id))
     if not fruit:
         raise HTTPException(status_code=404, detail="Fruit not found")
     
-    return FruitModel_to_FruitResponseBody(fruit)
+    return FruitModel_to_FruitResponseBody(fruit, detailed=detailed)
 
 ''' PUT /fruit/{id}'''
-@router.put("/{id}", response_model=schemas.FruitResponseBody, status_code=status.HTTP_200_OK)
+@router.put("/{id}", response_model=schemas.FruitResponseBody, response_model_exclude_unset=True, status_code=status.HTTP_200_OK)
 async def update_fruit(
     id: int,
     fruit_body: schemas.FruitRequestBody = Body(...),
@@ -45,9 +56,17 @@ async def delete_fruit(
     
     crud.fruit.delete(db, obj_in=schemas.FruitDelete(id=id))
     
+''' GET /fruit/'''
+@router.get("/", response_model=schemas.FruitMultiResponseBody, response_model_exclude_unset=True, status_code=status.HTTP_200_OK)
+async def read_fruits(
+    params: schemas.MultiReadQueryParams = Depends(),
+    db: Session = Depends(get_db)):
+    
+    fruits = crud.fruit.read_multi(db, obj_in=schemas.FruitMultiRead(query_params=params))
+    return schemas.FruitMultiResponseBody(fruits=[FruitModel_to_FruitResponseBody(fruit, detailed=params.detailed) for fruit in fruits])
 
 ''' POST /fruit/'''
-@router.post("/", response_model=schemas.FruitResponseBody, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=schemas.FruitResponseBody, response_model_exclude_unset=True, status_code=status.HTTP_201_CREATED)
 async def create_fruit(
     fruit_body: schemas.FruitRequestBody = Body(...),
     db: Session = Depends(get_db)):

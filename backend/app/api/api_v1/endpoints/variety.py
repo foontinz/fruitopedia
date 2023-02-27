@@ -11,13 +11,14 @@ router = APIRouter()
 @router.get("/{id}", response_model=schemas.VarietyResponseBody, status_code=status.HTTP_200_OK)
 async def read_variety(
     id: int,
+    detailed: bool = False,
     db: Session = Depends(get_db)):
     
     variety = crud.variety.read(db, obj_in=schemas.VarietyRead(id=id))
     if not variety:
         raise HTTPException(status_code=404, detail="Variety not found")
     
-    return VarietyModel_to_VarietyResponseBody(variety)
+    return VarietyModel_to_VarietyResponseBody(variety, detailed=detailed)
 
 ''' PUT /variety/{id}'''
 @router.put("/{id}", response_model=schemas.VarietyResponseBody, status_code=status.HTTP_200_OK)
@@ -48,6 +49,14 @@ async def delete_variety(
     
     crud.variety.delete(db, obj_in=schemas.VarietyDelete(id=id))
     
+''' GET /variety/'''
+@router.get("/", response_model=schemas.VarietyMultiResponseBody, status_code=status.HTTP_200_OK)
+async def read_varieties(
+    params: schemas.MultiReadQueryParams = Depends(),
+    db: Session = Depends(get_db)):
+
+    varieties = crud.variety.read_multi(db, obj_in=schemas.VarietyMultiRead(skip=params.skip, limit=params.limit, detailed=params.detailed))
+    return schemas.VarietyMultiResponseBody(varieties=[VarietyModel_to_VarietyResponseBody(variety, detailed=params.detailed) for variety in varieties])
 
 ''' POST /variety/'''
 @router.post("/", response_model=schemas.VarietyResponseBody, status_code=status.HTTP_201_CREATED)
