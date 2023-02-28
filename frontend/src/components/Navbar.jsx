@@ -9,7 +9,6 @@ const Navbar = () => {
     function toggleShrink() {
         const nav = document.getElementById('nav')
         isOpen ? nav.className = 'block' : nav.className = 'hidden md:block'
-        console.log(`open: ${isOpen}`)
     }
 
     useEffect(() => {

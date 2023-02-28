@@ -4,9 +4,13 @@ import { useState, useEffect, useRef } from 'react';
 import { default as Earth } from 'react-globe.gl'
 
 let fetchedCountries = []
+let fetchedCords = []
 
-const Globe = ({countries}) => {
+let cords = [0, 0]
+
+const Globe = ({countries, onCountrySelected}) => {
     const [selectedCountries, setSelectedCountries] = useState([]);
+    const [hoverD, setHoverD] = useState();
 
     const [windowWidth, setWindowWidth] = useState(0);
     const [windowHeight, setWindowHeight] = useState(0);
@@ -18,47 +22,45 @@ const Globe = ({countries}) => {
 
     useEffect(() => {
         if (fetchedCountries.length == 0) {
-            fetch('countries.geojson').then(res => res.json()).then((res) => fetchedCountries = res.features);
+            fetch('countries.geojson').then(res => res.json()).then(res => fetchedCountries = res.features)
         }
+        fetch('country-lat-long.json').then(res => res.json()).then(res => fetchedCords = res.ref_country_codes)
         resizeWindow();
         window.addEventListener("resize", resizeWindow);
         return () => window.removeEventListener("resize", resizeWindow);
     }, []);
 
-    const genRandHighlightColor = () => {
-        let r = Math.floor(Math.random()*50 + 205).toString(16)
-        let g = Math.floor(Math.random()*1 + 20).toString(16)
-        let b = Math.floor(Math.random()*1 + 50).toString(16)
+    const globeEl = useRef()
 
-        let res = '#' + r + g +b
-        return  res
-    }
-
-    const globeEl = useRef();
-
-    function zoomToCountry(lat, lng, altitude = 1.5) {
-        useEffect(() => {
-            globeEl.current.pointOfView({ lat: lat, lng: lng, altitude: altitude });
-          }, []);
+    function isoToCords(iso) {
+        let findByIso = fetchedCords.filter(c => c.alpha3 == iso)
+        let res = [findByIso[0].latitude, findByIso[0].longitude]
+        return res
     }
 
     function filterSelectedCountries(countryIsos) {
         if (fetchedCountries.length == 0) {
             return 0
         }
-        let filteredCounties = fetchedCountries.filter((c) => {
+        let filteredCountries = fetchedCountries.filter((c) => {
             return countryIsos.some((iso) => {
                 return c.properties.ISO_A3 == iso
             })
         })
-        setSelectedCountries(filteredCounties)
+        if (filteredCountries.length === 0) {
+            return -1
+        }
+        setSelectedCountries(filteredCountries)
+        cords = isoToCords(filteredCountries[0].properties.ISO_A3)
     }
 
     useEffect(() => {
+        console.log("Countries: ", countries)
         let selectedCodes = countries.map((c) => {
             return c.iso_code
         })
         filterSelectedCountries(selectedCodes)
+        globeEl.current.pointOfView({ lat: cords[0], lng: cords[1], altitude: 2 }); 
     }, [countries])
 
     return (
@@ -72,9 +74,17 @@ const Globe = ({countries}) => {
                 polygonsData={selectedCountries}
                 polygonResolution={3}
                 polygonMargin={0.3}
-                polygonCapColor={() => genRandHighlightColor()}
                 polygonSideColor={() => '#000000'}
-                polygonStrokeColor={() => false}
+                polygonAltitude={d => d === hoverD ? 0.06 : 0.04}
+                polygonCapColor={d => d === hoverD ? 'red' : 'lightgreen'}
+                onPolygonHover={setHoverD}
+                polygonLabel={({ properties: d }) => `
+                    <b>${d.ADMIN} (${d.ISO_A2})</b>
+                `}                    
+                polygonsTransitionDuration={300}
+                onPolygonClick={(c) => {
+                    onCountrySelected(c.properties.ISO_A3)
+                }}
             />
         </div>
     );

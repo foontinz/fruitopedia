@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react'
-import { useState } from 'react'
+import React from 'react'
 import { FcSearch } from 'react-icons/fc'
 
 let fruitData = [
@@ -18,8 +17,6 @@ let fruitData = [
 ]
 
 const Searchbar = (props) => {
-  const [searchInput, setSearchInput] = useState("")
-
   function findMatch(input, element) {
     if (input.length == 0) {
       return null // no input

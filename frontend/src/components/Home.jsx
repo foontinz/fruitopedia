@@ -4,6 +4,7 @@ import Searchbar from './Searchbar';
 import Navbar from './Navbar';
 import Globe from './Globe'
 import Hero from './Hero';
+import Sidebar from './Sidebar';
 
 let fruitData = [
   {
@@ -14,7 +15,7 @@ let fruitData = [
   {
     id: 1,
     name: "Orange",
-    varieties: [4, 5, 6]
+    varieties: [4]
   },
   {
     id: 2,
@@ -25,11 +26,11 @@ let fruitData = [
 
 let fruitVarieties = [
   {
-  "id": 1,
-  "name": "Fuji",
-  "fruit": 0,
-  "description": "Some description",
-  "origin_countries": [1]
+    "id": 1,
+    "name": "Fuji",
+    "fruit": 0,
+    "description": "Some description",
+    "origin_countries": [5]
   },
   {
     "id": 2,
@@ -44,6 +45,13 @@ let fruitVarieties = [
     "fruit": 0,
     "description": "Some description",
     "origin_countries": [4]
+  },
+  {
+    "id": 4,
+    "name": "Navel",
+    "fruit": 1,
+    "description": "Some description",
+    "origin_countries": [1, 3, 6]
   },
 ]
 
@@ -76,13 +84,30 @@ let fruitCountries = [
     "description": "nice country",
     "own_varieties": []
   },
+  {
+    "id": 5,
+    "name": "China",
+    "iso_code": "CHN",
+    "description": "nice country",
+    "own_varieties": []
+  },
+  {
+    "id": 6,
+    "name": "Germany",
+    "iso_code": "DEU",
+    "description": "nice country",
+    "own_varieties": []
+  },
 ]
 
 const Home = () => {
   const [countries, setCountries] = useState([]);
+  const [dataFromGlobe, setDataFromGlobe] = useState()
+  const [fruitVar, setFruitVar] = useState([])
+  const [fruit, setFruit] = useState([])
+  const [showSidebar, setShowSidebar] = useState(false)
 
-  const handleChildData = (dataFromChild) => {
-    console.log("handleChildData: " + dataFromChild)
+  const handleSearchbarData = (dataFromChild) => {
     // must be fetch !
     let fruitDetails = fruitData.find((el) => {
       return el.id === dataFromChild.id
@@ -109,12 +134,50 @@ const Home = () => {
     setCountries(countries)
     console.log(countries)
   };
+
+  function isoToCountry(iso) {
+    return fruitCountries.find((c) => {
+      return c.iso_code === iso
+    })
+  }
+
+  function countryIdToFruitVar(countryId) { // returns array with fruitvarieties belongs to its country
+    let res = []
+    fruitVarieties.filter((v) => {
+      if(v.origin_countries.some((each) => each == countryId)) {
+        res.push(v)
+      }
+    })
+    return res
+  }
+
+  function countryIdToFruit(countryId) {
+    let res = []
+    fruitData.filter((f) => {
+      if(f.varieties.some((each) => each == countryId)) {
+        res.push(f)
+      }
+    })
+    return res
+  }
+  
   return (
     <div>
-          <Navbar></Navbar>
-          <Hero></Hero>
-          <Searchbar onFruitSelected={handleChildData}></Searchbar>
-          <Globe countries={countries}></Globe>
+          <Navbar/>
+          <Hero/>
+          <Searchbar onFruitSelected={handleSearchbarData}/>
+          <Globe onCountrySelected={(val) => {
+            let country = isoToCountry(val)
+            let fruitVar = countryIdToFruitVar(country.id)
+            let fruit = countryIdToFruit(country.id)
+            
+            setFruit(fruit)
+            setFruitVar(fruitVar)
+            setDataFromGlobe(country)
+            setShowSidebar(true)
+          }} countries={countries}/>
+          <Sidebar onToggle={() => setShowSidebar(!showSidebar)} 
+          fruit={fruit} country={dataFromGlobe} fruitVar={fruitVar} showSidebar={showSidebar}/>
     </div>
   );
 };
