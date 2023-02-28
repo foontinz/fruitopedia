@@ -7,7 +7,7 @@ def FruitModel_to_FruitResponseBody(fruit: models.Fruit, detailed: bool = False)
             id=fruit.id,
             name=fruit.name,
             description=fruit.description,
-            varieties=[VarietyModel_to_VarietyResponseBody(variety) for variety in fruit.varieties]
+            varieties=[variety.id for variety in fruit.varieties]
         )
     return schemas.FruitResponseBody(
         id=fruit.id,
