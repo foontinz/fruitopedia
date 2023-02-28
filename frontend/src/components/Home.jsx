@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react';
 import Searchbar from './Searchbar';
 import Navbar from './Navbar';
 import Globe from './Globe'
 import Hero from './Hero';
 import Sidebar from './Sidebar';
+import Api from "./api.js"
+
+let api = new Api()
 
 let fruitData = [
   {
@@ -106,33 +109,23 @@ const Home = () => {
   const [fruitVar, setFruitVar] = useState([])
   const [fruit, setFruit] = useState([])
   const [showSidebar, setShowSidebar] = useState(false)
+  const [fruitList, setFruitList] = useState([])
+  const [fruitsLoaded, setFruitsLoaded] = useState(false)
+
+  useEffect(() => {
+    if (fruitList.length == 0) {
+      api.getAllFruits().then((f) => {
+        setFruitList(f.fruits) 
+      })
+    }
+  })
 
   const handleSearchbarData = (dataFromChild) => {
-    // must be fetch !
-    let fruitDetails = fruitData.find((el) => {
-      return el.id === dataFromChild.id
+    api.getFruitDetails(dataFromChild.id).then((d) => {
+      return api.getCountriesByFruitId(d.id)
+    }).then((c) => {
+      setCountries(c.countries)
     })
-
-    let varietyIds = fruitDetails.varieties
-    let filteredVarieties = fruitVarieties.filter((v) => {
-      return varietyIds.some((id) => {
-        return v.id === id
-      })
-    })
-
-    let originCountries = filteredVarieties.flatMap((v) => {
-      return v.origin_countries
-    })
-
-    originCountries = [...new Set(originCountries)] // remove duplicates
-
-    let countries = fruitCountries.filter((c) => {
-      return originCountries.some((id) => {
-        return c.id === id
-      })
-    })
-    setCountries(countries)
-    console.log(countries)
   };
 
   function isoToCountry(iso) {
@@ -141,7 +134,7 @@ const Home = () => {
     })
   }
 
-  function countryIdToFruitVar(countryId) { // returns array with fruitvarieties belongs to its country
+  function countryIdToFruitVar(countryId) {
     let res = []
     fruitVarieties.filter((v) => {
       if(v.origin_countries.some((each) => each == countryId)) {
@@ -165,7 +158,7 @@ const Home = () => {
     <div>
           <Navbar/>
           <Hero/>
-          <Searchbar onFruitSelected={handleSearchbarData}/>
+          <Searchbar fruitList={fruitList} onFruitSelected={handleSearchbarData}/>
           <Globe onCountrySelected={(val) => {
             let country = isoToCountry(val)
             let fruitVar = countryIdToFruitVar(country.id)

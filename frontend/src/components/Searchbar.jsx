@@ -1,21 +1,6 @@
 import React from 'react'
 import { FcSearch } from 'react-icons/fc'
 
-let fruitData = [
-  {
-    id: 0,
-    name: "Apple"
-  },
-  {
-    id: 1,
-    name: "Orange"
-  },
-  {
-    id: 2,
-    name: "Pear"
-  }
-]
-
 const Searchbar = (props) => {
   function findMatch(input, element) {
     if (input.length == 0) {
@@ -35,8 +20,8 @@ const Searchbar = (props) => {
     let input = event.target.value
     const allLi = document.querySelectorAll("#suggestions-bar li")
 
-    for (let i = 0; i < fruitData.length; i++) {
-      let res = findMatch(input, fruitData[i].name)
+    for (let i = 0; i < props.fruitList.length; i++) {
+      let res = findMatch(input, props.fruitList[i].name)
 
       let noRepeat = allLi.forEach(e => e.id != res) // check whether element is already typed or not
       if (noRepeat === undefined) {
@@ -46,8 +31,8 @@ const Searchbar = (props) => {
         const ul = document.getElementById("suggestions-bar")
         const li = document.createElement("li")
 
-        li.dataset.fruitName = fruitData[i].name
-        li.dataset.fruitId = fruitData[i].id
+        li.dataset.fruitName = props.fruitList[i].name
+        li.dataset.fruitId = props.fruitList[i].id
         li.innerHTML = res
         li.className = "h-[30px] pl-[5px] w-[250px] md:w-[400px] hover:bg-blue-500 hover:rounded-md"
         li.addEventListener("click", (e) => {
@@ -57,7 +42,7 @@ const Searchbar = (props) => {
           let allLi = document.querySelectorAll("#suggestions-bar li")
           allLi.forEach(e => e.remove()) // clear all li
 
-          props.onFruitSelected(fruitData.find((el) => el.id == id))
+          props.onFruitSelected(props.fruitList.find((el) => el.id == id))
         })
 
         ul.appendChild(li)
