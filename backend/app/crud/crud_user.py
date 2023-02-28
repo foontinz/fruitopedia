@@ -29,18 +29,21 @@ class CRUDUser(CRUDBase[User, UserCreate, UserRead, UserMultiRead, UserUpdate, U
         return super().delete(db, obj_in=obj_in)
     
     def read_by_email(self, db: Session, *, email: emailStr) -> User | None:
-        db.query(self.model).filter(self.model.email == email).first()
+        return db.query(self.model).filter(self.model.email == email).first()
     
     def read_by_username(self, db: Session, *, username: usernameStr) -> User | None:
-        db.query(self.model).filter(self.model.username == username).first()
+        return db.query(self.model).filter(self.model.username == username).first()
     
     def authenticate(self, db: Session, *, obj_in: UserLoginCredentials) -> User | None:
-        if obj_in.username and obj_in.email:
-            user_by_username = self.read_by_username(db, username=obj_in.username)
-            user_by_email = self.read_by_email(db, email=obj_in.email)
+        user_by_email = self.read_by_email(db, email=obj_in.email) if obj_in.email else None
+        user_by_username = self.read_by_username(db, username=obj_in.username) if obj_in.username else None
         
-        user_by_identifier = user_by_email if obj_in.email else user_by_username
+        if user_by_email and user_by_username:
+            if user_by_email.id != user_by_username.id:
+                return None
         
+        user_by_identifier = user_by_email if user_by_email else user_by_username
+
         if not user_by_identifier or not verify_password(obj_in.password, user_by_identifier.hashed_password, user_by_identifier.salt):
             return None
         return user_by_identifier
