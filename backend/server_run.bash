@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $1 != 'deploy' ]; then
+if [[ $1 != 'deploy' ]]; then
     DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
     PARENT_DIR="$(dirname "$DIR")"
 
@@ -9,4 +9,11 @@ if [ $1 != 'deploy' ]; then
     set +a
 fi
 
-alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 5000
+
+# Run migrations
+# alembic revision --autogenerate 
+alembic upgrade head 
+
+
+# Run server
+uvicorn app.main:app --host 0.0.0.0 --port 5000
