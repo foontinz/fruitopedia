@@ -40,7 +40,7 @@ class CountryUpdate(CountryBase):
 class CountryDelete(CountryBase):
     id: int
 
-class CountryRequestBody(BaseModel):
+class CountryRequest(BaseModel):
     name: str
     iso_code: str
     description: str | None = None

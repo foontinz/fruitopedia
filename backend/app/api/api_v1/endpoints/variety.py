@@ -23,10 +23,10 @@ async def read_variety(
 @router.put("/{id}", response_model=schemas.VarietyResponse, status_code=status.HTTP_200_OK)
 async def update_variety(
     id: int,
-    variety_body: schemas.VarietyRequestBody = Body(...),
+    variety_body: schemas.VarietyRequest = Body(...),
     db: Session = Depends(get_db)):
     
-    variety_create = crud.variety.VarietyRequestBody_to_VarietyCreate(db, variety_body=variety_body)
+    variety_create = crud.variety.request_to_create(db, variety_body=variety_body)
     if not variety_create:
         raise HTTPException(status_code=422, detail="Fruit or countries for variety are not found")
     
@@ -60,13 +60,13 @@ async def read_varieties(
 ''' POST /variety/'''
 @router.post("/", response_model=schemas.VarietyResponse, status_code=status.HTTP_201_CREATED)
 async def create_variety(
-    variety_body: schemas.VarietyRequestBody = Body(...),
+    variety_body: schemas.VarietyRequest = Body(...),
     db: Session = Depends(get_db)):
 
     if crud.variety.read_by_name(db, name=variety_body.name) in crud.variety.read_by_fruit_id(db, fruit_id=variety_body.fruit):
         raise HTTPException(status_code=400, detail="Variety is already exist")
     
-    variety_create = crud.variety.VarietyRequestBody_to_VarietyCreate(db, variety_body=variety_body)
+    variety_create = crud.variety.request_to_create(db, variety_body=variety_body)
     if not variety_create:
         raise HTTPException(status_code=422, detail="Fruit or countries for variety are not found")
     

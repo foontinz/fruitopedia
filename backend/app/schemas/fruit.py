@@ -36,7 +36,7 @@ class FruitUpdate(FruitBase):
 class FruitDelete(FruitBase):
     id: int
 
-class FruitRequestBody(BaseModel):
+class FruitRequest(BaseModel):
     name: str
     description: str | None = None
     varieties: list[int] = []

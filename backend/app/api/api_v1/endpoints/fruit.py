@@ -34,10 +34,10 @@ async def read_fruit(
 @router.put("/{id}", response_model=schemas.FruitResponse, response_model_exclude_unset=True, status_code=status.HTTP_200_OK)
 async def update_fruit(
     id: int,
-    fruit_body: schemas.FruitRequestBody = Body(...),
+    fruit_body: schemas.FruitRequest = Body(...),
     db: Session = Depends(get_db)):
     
-    fruit_create = crud.fruit.FruitRequestBody_to_FruitCreate(db, fruit_body=fruit_body)
+    fruit_create = crud.fruit.request_to_create(db, fruit_body=fruit_body)
     if not fruit_create:
         return HTTPException(status_code=422, detail="Varieties in fruit are not found")
     
@@ -67,13 +67,13 @@ async def read_fruits(
 ''' POST /fruit/'''
 @router.post("/", response_model=schemas.FruitResponse, response_model_exclude_unset=True, status_code=status.HTTP_201_CREATED)
 async def create_fruit(
-    fruit_body: schemas.FruitRequestBody = Body(...),
+    fruit_body: schemas.FruitRequest = Body(...),
     db: Session = Depends(get_db)):
     
     if crud.fruit.read_by_name(db, name=fruit_body.name):
         raise HTTPException(status_code=400, detail="Fruit is already exist")
     
-    fruit_create = crud.fruit.FruitRequestBody_to_FruitCreate(db, fruit_body=fruit_body)
+    fruit_create = crud.fruit.request_to_create(db, fruit_body=fruit_body)
     if not fruit_create:
         raise HTTPException(status_code=422, detail="Varieties in fruit are not found")
     

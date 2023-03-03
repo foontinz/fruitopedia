@@ -6,17 +6,17 @@ from .user import (
 
 from .country import (
     CountryInDB, CountryCreate, CountryRead, CountryMultiRead, CountryUpdate, CountryDelete, 
-    CountryRequestBody, CountryResponse, 
+    CountryRequest, CountryResponse, 
     CountryMultiResponse, CountryMultiReadByFruit)
 
 from .fruit import (
     FruitInDB, FruitCreate, FruitRead, FruitMultiRead, FruitUpdate, FruitDelete, 
-    FruitRequestBody, FruitResponse,  
+    FruitRequest, FruitResponse,  
     FruitMultiResponse, FruitMultiReadByCountry)
 
 from .variety import (
     VarietyInDB, VarietyCreate, VarietyRead, VarietyMultiRead, VarietyUpdate, VarietyDelete,
-    VarietyRequestBody, VarietyResponse, 
+    VarietyRequest, VarietyResponse, 
     VarietyMultiResponse)
 
 from .commons import (

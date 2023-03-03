@@ -3,7 +3,7 @@ from typing import TypeVar
 
 from app.models import Variety, Country, Fruit
 from app.crud.base import CRUDBase
-from app.schemas.variety import VarietyCreate, VarietyRead, VarietyMultiRead, VarietyUpdate, VarietyDelete, VarietyRequestBody, VarietyResponse
+from app.schemas.variety import VarietyCreate, VarietyRead, VarietyMultiRead, VarietyUpdate, VarietyDelete, VarietyRequest, VarietyResponse
 
 varietyName = TypeVar('varietyName', bound=str)
 
@@ -30,7 +30,7 @@ class CRUDVariety(CRUDBase[Variety, VarietyCreate, VarietyRead, VarietyMultiRead
     def read_by_fruit_id(self, db: Session, *, fruit_id: int) -> list[Variety]:
         return db.query(Variety).filter(Variety.fruit_id == fruit_id).all()
 
-    def VarietyRequestBody_to_VarietyCreate(self, db: Session, *, variety_body: VarietyRequestBody) -> VarietyCreate | None:
+    def request_to_create(self, db: Session, *, variety_body: VarietyRequest) -> VarietyCreate | None:
         origin_countries = [db.query(Country).filter(Country.id == country_id).first() for country_id in variety_body.origin_countries]
         fruit = db.query(Fruit).filter(Fruit.id == variety_body.fruit).first()
 

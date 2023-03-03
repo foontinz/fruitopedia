@@ -34,10 +34,10 @@ async def read_country(
 @router.put("/{id}", response_model=schemas.CountryResponse, response_model_exclude_unset=True, status_code=status.HTTP_200_OK)
 async def update_country(
     id: int,
-    country_body: schemas.CountryRequestBody = Body(...),
+    country_body: schemas.CountryRequest = Body(...),
     db: Session = Depends(get_db)):
 
-    country_create = crud.country.CountryRequestBody_to_CountryCreate(db, country_body=country_body)
+    country_create = crud.country.request_to_create(db, country_body=country_body)
     if not country_create:
         raise HTTPException(status_code=422, detail="Varieties in country are not found")
     
@@ -71,13 +71,13 @@ async def read_countries(
 ''' POST /country/'''
 @router.post("/", response_model=schemas.CountryResponse, response_model_exclude_unset=True, status_code=status.HTTP_201_CREATED)
 async def create_country(
-    country_body: schemas.CountryRequestBody = Body(...),
+    country_body: schemas.CountryRequest = Body(...),
     db: Session = Depends(get_db)):
     
     if crud.country.read_by_name(db, name=country_body.name) or crud.country.read_by_iso_code(db, iso_code=country_body.iso_code):
         raise HTTPException(status_code=400, detail="Country is already exist")
     
-    country_create = crud.country.CountryRequestBody_to_CountryCreate(db, country_body=country_body)
+    country_create = crud.country.request_to_create(db, country_body=country_body)
     if not country_create:
         return HTTPException(status_code=422, detail="Varieties in country are not found")
     

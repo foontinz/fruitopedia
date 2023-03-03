@@ -34,7 +34,7 @@ class VarietyUpdate(VarietyBase):
 class VarietyDelete(VarietyBase):
     id: int
 
-class VarietyRequestBody(BaseModel):
+class VarietyRequest(BaseModel):
     name: str
     fruit: int
     description: str | None = None
