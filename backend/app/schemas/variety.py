@@ -40,12 +40,12 @@ class VarietyRequestBody(BaseModel):
     description: str | None = None
     origin_countries: list[int] = []
 
-class VarietyResponseBody(VarietyBase):
+class VarietyResponse(VarietyBase):
     name: str
     fruit: int
     description: str | None 
     origin_countries: list[int] = []
 
 
-class VarietyMultiResponseBody(BaseModel):
-    varieties: list[VarietyResponseBody]
+class VarietyMultiResponse(BaseModel):
+    varieties: list[VarietyResponse]

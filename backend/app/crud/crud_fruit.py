@@ -3,7 +3,7 @@ from typing import TypeVar
 
 from app.models import Fruit, Variety, Country
 from app.crud.base import CRUDBase
-from app.schemas.fruit import FruitCreate, FruitUpdate, FruitRead, FruitMultiRead, FruitDelete, FruitRequestBody, FruitMultiReadByCountry
+from app.schemas.fruit import FruitCreate, FruitUpdate, FruitRead, FruitMultiRead, FruitDelete, FruitRequestBody, FruitMultiReadByCountry, FruitResponse
 
 fruitName = TypeVar('fruitName', bound=str)
 
@@ -47,6 +47,14 @@ class CRUDFruit(CRUDBase[Fruit, FruitCreate, FruitRead, FruitMultiRead, FruitUpd
             varieties=varieties
         )
 
-    
+    def model_to_response_body(self, db: Session, *, fruit: Fruit, detailed: bool = False) -> FruitResponse:
+        fruit_response = FruitResponse(
+            id=fruit.id,
+            name=fruit.name
+        )
+        if detailed:
+            fruit_response.description = fruit.description
+            fruit_response.varieties = [variety.id for variety in fruit.varieties]
+        return fruit_response
 
 fruit = CRUDFruit(Fruit)

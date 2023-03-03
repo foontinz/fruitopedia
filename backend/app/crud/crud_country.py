@@ -3,7 +3,7 @@ from typing import TypeVar
 
 from app.models import Country, Variety
 from app.crud.base import CRUDBase
-from app.schemas.country import CountryCreate, CountryRead, CountryMultiRead, CountryUpdate, CountryDelete, CountryRequestBody, CountryMultiReadByFruit
+from app.schemas.country import CountryCreate, CountryRead, CountryMultiRead, CountryUpdate, CountryDelete, CountryRequestBody, CountryMultiReadByFruit, CountryResponse
 
 countryName = TypeVar('countryName', bound=str)
 countryISOCode = TypeVar('countryISOCode', bound=str)
@@ -51,8 +51,19 @@ class CRUDCountry(CRUDBase[Country, CountryCreate, CountryRead, CountryMultiRead
             description=country_body.description,
             own_varieties=varieties
         )
+    
+    def model_to_response_body(self, db: Session, *, country: Country, detailed: bool = False) -> CountryResponse:
+        country_response = CountryResponse(
+            id=country.id,
+            name=country.name,
+            iso_code=country.iso_code,
+        )
         
-
-
+        if detailed:
+            country_response.description = country.description
+            country_response.own_varieties = [variety.id for variety in country.own_varieties]
+        
+        return country_response
+        
     
 country = CRUDCountry(Country)

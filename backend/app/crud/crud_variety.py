@@ -3,7 +3,7 @@ from typing import TypeVar
 
 from app.models import Variety, Country, Fruit
 from app.crud.base import CRUDBase
-from app.schemas.variety import VarietyCreate, VarietyRead, VarietyMultiRead, VarietyUpdate, VarietyDelete, VarietyRequestBody
+from app.schemas.variety import VarietyCreate, VarietyRead, VarietyMultiRead, VarietyUpdate, VarietyDelete, VarietyRequestBody, VarietyResponse
 
 varietyName = TypeVar('varietyName', bound=str)
 
@@ -43,7 +43,19 @@ class CRUDVariety(CRUDBase[Variety, VarietyCreate, VarietyRead, VarietyMultiRead
             origin_countries=origin_countries,
             fruit=fruit
         )
+    
+    def model_to_response_body(self, db: Session, *, variety: Variety, detailed: bool = False) -> VarietyResponse:
+        variety_response = VarietyResponse(
+            id=variety.id,
+            name=variety.name,
+            fruit=variety.fruit.id
+        )
 
+        if detailed:
+            variety_response.description = variety.description
+            variety_response.origin_countries = [country.id for country in variety.origin_countries]
+
+        return variety_response
 
 
 variety = CRUDVariety(Variety)

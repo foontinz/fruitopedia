@@ -41,11 +41,11 @@ class FruitRequestBody(BaseModel):
     description: str | None = None
     varieties: list[int] = []
 
-class FruitResponseBody(FruitBase):
+class FruitResponse(FruitBase):
     name: str
     description: str | None 
     varieties: list[int] = []
 
-class FruitMultiResponseBody(BaseModel):
-    fruits: list[FruitResponseBody]
+class FruitMultiResponse(BaseModel):
+    fruits: list[FruitResponse]
 
