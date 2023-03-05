@@ -1,6 +1,6 @@
 export default class Api {
     constructor() {
-        this.apiBase = "http://localhost:5000/api/v1/"
+        this.apiBase = "http://localhost/api/v1/"
     }
     getAllFruits() {
         const url = this.apiBase + "fruit/"
