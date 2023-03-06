@@ -21,3 +21,6 @@ from .variety import (
 
 from .commons import (
     MultiReadQueryParams)
+
+from .message import (
+    Message)
