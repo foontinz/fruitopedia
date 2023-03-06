@@ -30,13 +30,13 @@ class CRUDVariety(CRUDBase[Variety, VarietyCreate, VarietyRead, VarietyMultiRead
     def read_by_fruit_id(self, db: Session, *, fruit_id: int) -> list[Variety]:
         return db.query(Variety).filter(Variety.fruit_id == fruit_id).all()
 
+    def read_by_name_and_fruit_id(self, db: Session, *, name: varietyName, fruit_id: int) -> Variety | None:
+        return db.query(Variety).filter(Variety.name == name, Variety.fruit_id == fruit_id).first()
+    
     def request_to_create(self, db: Session, *, variety_body: VarietyRequest) -> VarietyCreate | None:
         origin_countries = [db.query(Country).filter(Country.id == country_id).first() for country_id in variety_body.origin_countries]
         fruit = db.query(Fruit).filter(Fruit.id == variety_body.fruit).first()
 
-        if not all(origin_countries) or not fruit:
-            return None
-        
         return VarietyCreate(
             name=variety_body.name,
             description=variety_body.description,

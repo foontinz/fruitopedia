@@ -35,7 +35,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, ReadAllSchem
     :return: The read record
     '''
     def read(self, db: Session, *, obj_in: ReadSchemaType) -> ModelType | None:
-        return db.query(self.model).filter(self.model.id == obj_in.id).first()
+        return db.query(self.model).get(obj_in.id)
         
 
     '''Read all records from the database
@@ -61,7 +61,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, ReadAllSchem
     :return: The updated record
     '''
     def update(self, db: Session, *, obj_in: UpdateSchemaType) -> ModelType | None:
-        db_obj = db.query(self.model).filter(self.model.id == obj_in.id).first()
+        db_obj = db.query(self.model).get(obj_in.id)
         if not db_obj:
             return None
         for key, value in obj_in.update_to_obj.dict(exclude_unset=True).items():
@@ -76,7 +76,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, ReadAllSchem
     :return: The deleted record
     '''
     def delete(self, db: Session, *, obj_in: DeleteSchemaType) -> None:
-        obj = db.query(self.model).filter(self.model.id == obj_in.id).first()
+        obj = db.query(self.model).get(obj_in.id)
         db.delete(obj)
         db.commit()
-        return None
+        return db.query(self.model).filter(self.model.id == obj_in.id).first()

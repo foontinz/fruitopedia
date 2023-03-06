@@ -20,8 +20,6 @@ class CRUDFruit(CRUDBase[Fruit, FruitCreate, FruitRead, FruitMultiRead, FruitUpd
     
     def read_multi_by_country_id(self, db: Session, *, obj_in: FruitMultiReadByCountry) -> list[Fruit]:
         country = db.query(Country).filter(Country.id == obj_in.country_id).first()
-        if not country:
-            return []
         fruits = set([variety.fruit for variety in country.own_varieties][obj_in.skip:obj_in.limit])
         return list(fruits)
     
@@ -37,9 +35,6 @@ class CRUDFruit(CRUDBase[Fruit, FruitCreate, FruitRead, FruitMultiRead, FruitUpd
 
     def request_to_create(self, db: Session, *, fruit_body: FruitRequest) -> FruitCreate | None:
         varieties = [db.query(Variety).filter(Variety.id == variety_id).first() for variety_id in fruit_body.varieties]
-
-        if not all(varieties):
-            return None
         
         return FruitCreate(
             name=fruit_body.name,

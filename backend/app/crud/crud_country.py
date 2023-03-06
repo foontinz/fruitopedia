@@ -42,9 +42,6 @@ class CRUDCountry(CRUDBase[Country, CountryCreate, CountryRead, CountryMultiRead
     def request_to_create(self, db: Session, *, country_body: CountryRequest) -> CountryCreate | None:
         varieties = [db.query(Variety).filter(Variety.id == variety).first() for variety in country_body.own_varieties]
 
-        if not all(varieties):
-            return None
-
         return CountryCreate(
             name=country_body.name,
             iso_code=country_body.iso_code,
