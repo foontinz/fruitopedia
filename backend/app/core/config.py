@@ -10,22 +10,41 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
+    POSTGRES_TEST_DB: str
     POSTGRES_PORT: str = "5432"
 
-    SQLALCHEMY_DATABASE_URI: PostgresDsn | None = None
+    SQLALCHEMY_URI: PostgresDsn | None = None
+    SQLALCHEMY_DATABASE_URI: PostgresDsn | None = None    
+    SQLALCHEMY_TEST_DATABASE_URI: PostgresDsn | None = None
 
-    @validator("SQLALCHEMY_DATABASE_URI", pre=True)
+    @validator("SQLALCHEMY_URI", pre=True)
     def assemble_db_connection(cls, v: str | None, values: dict[str, Any]) -> Any:
         if isinstance(v, str):
             return v
+
         return PostgresDsn.build(
             scheme="postgresql",
             user=values.get("POSTGRES_USER"),
             password=values.get("POSTGRES_PASSWORD"),
             host=values.get("POSTGRES_SERVER"),
-            port=values.get("POSTGRES_PORT"),
-            path=f"/{values.get('POSTGRES_DB') or ''}",
-        )
+            port=values.get("POSTGRES_PORT")
+            )
+
+    @validator("SQLALCHEMY_DATABASE_URI", pre=True)
+    def assemble_real_db_connection(cls, v: str | None, values: dict[str, Any]) -> Any:
+        if isinstance(v, str):
+            return v
+    
+        return f"{values.get('SQLALCHEMY_URI')}/{values.get('POSTGRES_DB')}"
+
+    
+    @validator("SQLALCHEMY_TEST_DATABASE_URI", pre=True)    
+    def assemble_test_db_connection(cls, v: str | None, values: dict[str, Any]) -> Any:
+        if isinstance(v, str):
+            return v
+    
+        return f"{values.get('SQLALCHEMY_URI')}/{values.get('POSTGRES_TEST_DB')}"
+        
 
     SUPER_USER_USERNAME: str = "admin"
     SUPER_USER_EMAIL: str = "admin@admin.com"

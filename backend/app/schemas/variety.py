@@ -34,18 +34,18 @@ class VarietyUpdate(VarietyBase):
 class VarietyDelete(VarietyBase):
     id: int
 
-class VarietyRequestBody(BaseModel):
+class VarietyRequest(BaseModel):
     name: str
     fruit: int
     description: str | None = None
     origin_countries: list[int] = []
 
-class VarietyResponseBody(VarietyBase):
+class VarietyResponse(VarietyBase):
     name: str
     fruit: int
     description: str | None 
     origin_countries: list[int] = []
 
 
-class VarietyMultiResponseBody(BaseModel):
-    varieties: list[VarietyResponseBody]
+class VarietyMultiResponse(BaseModel):
+    varieties: list[VarietyResponse]

@@ -6,18 +6,21 @@ from .user import (
 
 from .country import (
     CountryInDB, CountryCreate, CountryRead, CountryMultiRead, CountryUpdate, CountryDelete, 
-    CountryRequestBody, CountryResponseBody, 
-    CountryMultiResponseBody, CountryMultiReadByFruit)
+    CountryRequest, CountryResponse, 
+    CountryMultiResponse, CountryMultiReadByFruit)
 
 from .fruit import (
     FruitInDB, FruitCreate, FruitRead, FruitMultiRead, FruitUpdate, FruitDelete, 
-    FruitRequestBody, FruitResponseBody,  
-    FruitMultiResponseBody, FruitMultiReadByCountry)
+    FruitRequest, FruitResponse,  
+    FruitMultiResponse, FruitMultiReadByCountry)
 
 from .variety import (
     VarietyInDB, VarietyCreate, VarietyRead, VarietyMultiRead, VarietyUpdate, VarietyDelete,
-    VarietyRequestBody, VarietyResponseBody, 
-    VarietyMultiResponseBody)
+    VarietyRequest, VarietyResponse, 
+    VarietyMultiResponse)
 
 from .commons import (
     MultiReadQueryParams)
+
+from .message import (
+    Message)

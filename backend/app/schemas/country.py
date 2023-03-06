@@ -40,7 +40,7 @@ class CountryUpdate(CountryBase):
 class CountryDelete(CountryBase):
     id: int
 
-class CountryRequestBody(BaseModel):
+class CountryRequest(BaseModel):
     name: str
     iso_code: str
     description: str | None = None
@@ -52,12 +52,12 @@ class CountryRequestBody(BaseModel):
             raise ValueError('iso_code must be 3 characters long')
         return v
     
-class CountryResponseBody(CountryBase):
+class CountryResponse(CountryBase):
     name: str
     iso_code: str
     description: str | None 
     own_varieties: list[int] = []
 
 
-class CountryMultiResponseBody(BaseModel):
-    countries: list[CountryResponseBody]
+class CountryMultiResponse(BaseModel):
+    countries: list[CountryResponse]
