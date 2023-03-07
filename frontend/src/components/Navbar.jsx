@@ -65,13 +65,15 @@ const Navbar = () => {
                 <Login changeState={(state) => setShowLogin(state)} showLogin={showLogin}/>
                 <Registration changeState={(state) => setShowRegistration(state)} showRegistration={showRegistration}/>
                 <div id='authorization' className='absolute right-1 h-[68px] flex justify-center items-center mx-4 text-sm'>
-                    <div className='border rounded-md border-black hover:bg-blue-400 mx-2 p-1.5 px-3 transition hover-duration:500'>
-                        <h1 onClick={() => setShowLogin(true)} className='hover:cursor-pointer '>
+                    <div onClick={() => setShowLogin(true)}
+                    className='border rounded-md border-black hover:bg-blue-400 mx-2 p-1.5 px-3 transition hover-duration:500 hover:cursor-pointer'>
+                        <h1>
                                 Login
                             </h1>
                     </div>
-                    <div className='border rounded-md border-black hover:bg-blue-400 mx-2 p-1.5 transition hover-duration:500'>
-                        <h1 onClick={() => setShowRegistration(true)} className='hover:cursor-pointer '>
+                    <div onClick={() => setShowRegistration(true)}
+                    className='border rounded-md border-black hover:bg-blue-400 mx-2 p-1.5 transition hover-duration:500 hover:cursor-pointer'>
+                        <h1>
                                 Register
                             </h1>
                     </div>
