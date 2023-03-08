@@ -60,12 +60,7 @@ def override_dep_db(prestart_db):
         yield overrider     
 
 @pytest.fixture(scope="module")
-def get_test_db(prestart_db):
+def test_db(prestart_db):
     return prestart_db()
 
 
-
-
-#TODO fixtures are send to app as funcs, but not as their results. WHY?
-# Use parametrization 
-#TODO migrations are not affect new db. WHY?
