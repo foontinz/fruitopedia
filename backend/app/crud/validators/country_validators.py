@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models import Fruit, Variety, Country
 from app.schemas.fruit import FruitRead
+from app.crud.validators.error import ValidationError
 from app.schemas.variety import VarietyRead, VarietyRequest
 from app.schemas.country import CountryRead, CountryRequest
 from app.crud import fruit, variety, country
@@ -27,37 +28,37 @@ class CountryValidators:
     @classmethod
     def validate_update(cls, db: Session, country_id: int, country_request: CountryRequest) -> None:
         if not cls._is_country_exist(db=db, country_id=country_id):
-            raise ValueError('Country does not exist')
+            raise ValidationError(message='Country does not exist')
         
 
         if (country_existing := country.read_by_name(db=db, name=country_request.name)) and country_existing.id != country_id:
-            raise ValueError('Country with this name already exists')
+            raise ValidationError(message='Country with this name already exists')
         
         if (country_existing := country.read_by_iso_code(db=db, iso_code=country_request.iso_code)) and country_existing.id != country_id:
-            raise ValueError('Country with this iso code already exists')
+            raise ValidationError(message='Country with this iso code already exists')
         
         if not all(cls._are_varieties_exist(db=db, variety_ids=country_request.own_varieties)):
-            raise ValueError("Not all country's varieties exist")
+            raise ValidationError(message="Not all country's varieties exist")
         
         return
     
     @classmethod
     def validate_create(cls, db: Session, country_request: CountryRequest) -> None:
         if cls._is_country_name_exist(db=db, name=country_request.name):
-            raise ValueError('Country with this name already exists')
+            raise ValidationError(message='Country with this name already exists')
         
         if cls._is_country_iso_exist(db=db, iso_code=country_request.iso_code):
-            raise ValueError('Country with this iso code already exists')
+            raise ValidationError(message='Country with this iso code already exists')
         
         if not all(cls._are_varieties_exist(db=db, variety_ids=country_request.own_varieties)):
-            raise ValueError("Not all country's varieties exist")
+            raise ValidationError(message="Not all country's varieties exist")
         
         return
     
     @classmethod
     def validate_delete(cls, db: Session, country_id: int) -> None:
         if not cls._is_country_exist(db=db, country_id=country_id):
-            raise ValueError('Country does not exist')
+            raise ValidationError(message='Country does not exist')
         
         return
     
