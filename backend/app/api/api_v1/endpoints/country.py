@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app import crud, schemas
 from app.api.deps import get_db
 from app.api.responses import RESPONSES
+from app.crud.validators.error import ValidationError
 from app.crud.validators.country_validators import CountryValidators
 router = APIRouter()
 
@@ -46,7 +47,7 @@ async def update_country(
 
     try:
         CountryValidators.validate_update(db, country_id=id,country_request=country_body)
-    except ValueError as e:
+    except ValidationError as e:
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message":str(e)})
     
     country_create = crud.country.request_to_create(db, country_body=country_body)
@@ -65,7 +66,7 @@ async def delete_country(
 
     try: 
         CountryValidators.validate_delete(db, country_id=id)
-    except ValueError as e: 
+    except ValidationError as e: 
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message":str(e)})
 
 
@@ -92,7 +93,7 @@ async def create_country(
     
     try:
         CountryValidators.validate_create(db, country_request=country_body)
-    except ValueError as e:
+    except ValidationError as e:
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message":str(e)})
     
     country_create = crud.country.request_to_create(db, country_body=country_body)

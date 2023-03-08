@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app import crud, schemas
 from app.api.deps import get_db
 from app.api.responses import RESPONSES
+from app.crud.validators.error import ValidationError
 from app.crud.validators.variety_validators import VarietyValidators
 router = APIRouter()
 
@@ -31,7 +32,7 @@ async def update_variety(
 
     try:
         VarietyValidators.validate_update(db, variety_id=id, variety_request=variety_body)
-    except ValueError as e:
+    except ValidationError as e:
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(e)})
 
     variety_create = crud.variety.request_to_create(db, variety_body=variety_body)
@@ -50,7 +51,7 @@ async def delete_variety(
 
     try:
         VarietyValidators.validate_delete(db, variety_id=id)
-    except ValueError as e:
+    except ValidationError as e:
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(e)})
     
     if crud.variety.delete(db, obj_in=schemas.VarietyDelete(id=id)):
@@ -75,7 +76,7 @@ async def create_variety(
 
     try:
         VarietyValidators.validate_create(db, variety_request=variety_body)
-    except ValueError as e:
+    except ValidationError as e:
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(e)})
     
     variety_create = crud.variety.request_to_create(db, variety_body=variety_body)

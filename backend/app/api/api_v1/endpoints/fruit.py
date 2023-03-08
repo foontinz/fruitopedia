@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app import crud, schemas
 from app.api.deps import get_db
 from app.api.responses import RESPONSES
+from app.crud.validators.error import ValidationError
 from app.crud.validators.fruit_validators import FruitValidators
 
 router = APIRouter()
@@ -46,7 +47,7 @@ async def update_fruit(
     
     try:
         FruitValidators.validate_update(db, id=id, fruit_request=fruit_body)
-    except HTTPException as e:
+    except ValidationError as e:
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(e)})
     
     fruit_create = crud.fruit.request_to_create(db, fruit_body=fruit_body)
@@ -66,7 +67,7 @@ async def delete_fruit(
 
     try:
         FruitValidators.validate_delete(db, id=id)
-    except HTTPException as e:
+    except ValidationError as e:
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(e)})
 
     if crud.fruit.delete(db, obj_in=schemas.FruitDelete(id=id)):
@@ -93,7 +94,7 @@ async def create_fruit(
     
     try:
         FruitValidators.validate_create(db, fruit_request=fruit_body)
-    except HTTPException as e:
+    except ValidationError as e:
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": str(e)})
 
     fruit_create = crud.fruit.request_to_create(db, fruit_body=fruit_body)    
