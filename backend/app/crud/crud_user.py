@@ -2,15 +2,22 @@ from sqlalchemy.orm import Session
 
 from app.models.user import User
 from app.crud.base import CRUDBase
-from app.schemas.user import UserCreate, UserRead, UserMultiRead, UserUpdate, UserDelete, UserLoginCredentials
+from app.crud.types import emailStr, usernameStr
+from app.schemas.user import (
+    UserCreate, UserUpdate, UserDelete,
+    UserRead, UserReadMulti, UserReadAll,
+    UserResponse, UserMultiResponse,
+    UserLoginCredentials
+)
+from app.schemas.user import User as UserSchema
+
 from app.core.security import verify_password
 
-from typing import TypeVar
-
-usernameStr = TypeVar('usernameStr', bound=str)
-emailStr = TypeVar('emailStr', bound=str)
-
-class CRUDUser(CRUDBase[User, UserCreate, UserRead, UserMultiRead, UserUpdate, UserDelete]):
+class CRUDUser(CRUDBase[
+    User, UserSchema, UserCreate, 
+    UserRead, UserReadMulti, UserReadAll,
+    UserResponse, UserMultiResponse,
+    UserUpdate, UserDelete]):
     
     
     def create(self, db: Session, *, obj_in: UserCreate) -> User | None:
@@ -19,8 +26,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserRead, UserMultiRead, UserUpdate, U
     def read(self, db: Session, *, obj_in: UserRead) -> User | None:
         return super().read(db, obj_in=obj_in)
     
-    def read_multi(self, db: Session, *, obj_in: UserMultiRead) -> list[User]:
-        return super().read_multi(db, obj_in=obj_in)
+    def read_all(self, db: Session, *, obj_in: UserReadMulti) -> list[User]:
+        return super().read_all(db, obj_in=obj_in)
     
     def update(self, db: Session, *, obj_in: UserUpdate) -> User | None:
         return super().update(db, obj_in=obj_in)
