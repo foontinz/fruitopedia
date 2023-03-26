@@ -1,37 +1,39 @@
 from sqlalchemy.orm import Session
-from typing import TypeVar
+from functools import reduce
+from operator import iconcat
 
 from app.models import Country, Variety
 from app.crud.base import CRUDBase
-from app.schemas.country import CountryCreate, CountryRead, CountryMultiRead, CountryUpdate, CountryDelete, CountryRequest, CountryMultiReadByFruit, CountryResponse
+from app.crud.types import countryName, countryISOCode, fruitId, varietyId
+from app.schemas.country import (
+    CountryCreate, CountryDelete, CountryUpdate,
+    CountryRead, CountryReadMulti, CountryReadAll,   
+    CountryReadByFruitQueryParams, CountryReadMultiByFruitQueryParams,
+    CountryReadByVarietyQueryParams, CountryReadMultiByVarietyQueryParams,
+    CountryRequest, CountryResponse, CountryMultiResponse
+)
 
-countryName = TypeVar('countryName', bound=str)
-countryISOCode = TypeVar('countryISOCode', bound=str)
+from app.schemas.country import Country as CountrySchema
 
-class CRUDCountry(CRUDBase[Country, CountryCreate, CountryRead, CountryMultiRead, CountryUpdate, CountryDelete]):
+class CRUDCountry(CRUDBase[
+    Country, CountrySchema, CountryCreate, 
+    CountryRead, CountryReadMulti, CountryReadAll, 
+    CountryUpdate, CountryDelete,
+    CountryResponse, CountryMultiResponse]):
         
-    def create(self, db: Session, *, obj_in: CountryCreate) -> Country | None:
-        return super().create(db, obj_in=obj_in)
-    
-    def read(self, db: Session, *, obj_in: CountryRead) -> Country | None:
-        return super().read(db, obj_in=obj_in)
-    
-    def read_multi(self, db: Session, *, obj_in: CountryMultiRead) -> list[Country]:
-        return super().read_multi(db, obj_in=obj_in)
-    
-    def read_multi_by_fruit_id(self, db: Session, *, obj_in: CountryMultiReadByFruit) -> list[Country]:
+  
+    def read_by_fruit_id(self, db: Session, *, id: fruitId, obj_in: CountryReadByFruitQueryParams) -> list[Country]:
 
-        varieties = db.query(Variety).filter(Variety.fruit_id == obj_in.fruit_id).all()
-        countries = []
-        [countries.extend(variety.origin_countries) for variety in varieties]
+        varieties = db.query(Variety).filter(Variety.fruit_id == id).all()
+        countries = list(set(
+            reduce(iconcat, [variety.own_countries for variety in varieties], [])))[obj_in.skip:obj_in.skip + obj_in.limit]
 
-        return list(set(countries))
+        return countries
 
-    def update(self, db: Session, *, obj_in: CountryUpdate) -> Country | None:
-        return super().update(db, obj_in=obj_in)
-    
-    def delete(self, db: Session, *, obj_in: CountryDelete) -> Country | None:
-        return super().delete(db, obj_in=obj_in)
+    def read_by_variety_id(self, db: Session, *, id: varietyId, obj_in: CountryReadByVarietyQueryParams) -> list[Country]:
+        variety = db.query(Variety).filter(Variety.id == id).first()
+        countries = variety.own_countries[obj_in.skip:obj_in.skip + obj_in.limit]
+        return countries
     
     def read_by_name(self, db: Session, *, name: countryName) -> Country | None:
         return db.query(Country).filter(Country.name == name).first()
@@ -48,19 +50,5 @@ class CRUDCountry(CRUDBase[Country, CountryCreate, CountryRead, CountryMultiRead
             description=country_body.description,
             own_varieties=varieties
         )
-    
-    def model_to_response_body(self, db: Session, *, country: Country, detailed: bool = False) -> CountryResponse:
-        country_response = CountryResponse(
-            id=country.id,
-            name=country.name,
-            iso_code=country.iso_code,
-        )
-        
-        if detailed:
-            country_response.description = country.description
-            country_response.own_varieties = [variety.id for variety in country.own_varieties]
-        
-        return country_response
-        
     
 country = CRUDCountry(Country)
