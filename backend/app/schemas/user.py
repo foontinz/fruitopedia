@@ -27,9 +27,12 @@ class UserCreate(BaseModel):
 class UserRead(UserBase):
     id: int 
     
-class UserMultiRead(BaseModel):
+class UserReadAll(BaseModel):
     skip: int = 0
     limit: int = 100
+
+class UserReadMulti(BaseModel):
+    ids: list[int] = []
 
 class UserUpdate(UserBase):
     id: int 
@@ -68,3 +71,12 @@ class UserLoginCredentials(UserCreateCredentials):
     email: EmailStr | None = None
 
 
+class User(BaseModel):
+    ...
+
+class UserResponse(BaseModel):
+    ...
+
+class UserMultiResponse(BaseModel):
+    ...
+    
