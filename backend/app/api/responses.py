@@ -1,7 +1,8 @@
 from fastapi import status
 from fastapi.exceptions import RequestValidationError
-from app import schemas
 
+from app import schemas
+from app.schemas import Message
 
 RESPONSES = {
     "GET": {
@@ -10,15 +11,15 @@ RESPONSES = {
             "description": "Resource found"
             },
         status.HTTP_404_NOT_FOUND: {
-            "model": schemas.Message,
+            "model": schemas.FruitResponse,
             "description": "Requested resource not found"
             },
         status.HTTP_401_UNAUTHORIZED: {
-            "model": schemas.Message,
+            "model": schemas.FruitResponse,
             "description": "Not authorized, please provide Authorization header"
             },
         status.HTTP_403_FORBIDDEN: {
-            "model": schemas.Message,
+            "model": schemas.FruitResponse,
             "description": "Not enough permissions to access resource"
             },
         },
@@ -28,11 +29,11 @@ RESPONSES = {
             "description": "Resource found"
             },
         status.HTTP_401_UNAUTHORIZED: {
-            "model": schemas.Message,
+            "model": schemas.FruitResponse,
             "description": "Not authorized, please provide Authorization header"
             },
         status.HTTP_403_FORBIDDEN: {
-            "model": schemas.Message,
+            "model": schemas.FruitResponse,
             "description": "Not enough permissions to access resource"
             }   
         },
@@ -42,15 +43,15 @@ RESPONSES = {
             "description": "Resource created"
             },
         status.HTTP_400_BAD_REQUEST: {
-            "model": schemas.Message,
-            "description": "Resource not created, due to reasons clarified in message"
+            "model": schemas.FruitResponse,
+            "description": "Resource not created, due to reasons clarified in FruitResponse"
             },
         status.HTTP_403_FORBIDDEN: {
-            "model": schemas.Message, 
+            "model": schemas.FruitResponse, 
             "description": "Not enough permissions to access resource"
             },
         status.HTTP_401_UNAUTHORIZED: {
-            "model": schemas.Message,
+            "model": schemas.FruitResponse,
             "description": "Not authorized, please provide Authorization header"
             },
         },
@@ -60,19 +61,19 @@ RESPONSES = {
             "description": "Resource updated"
             },
         status.HTTP_400_BAD_REQUEST: {
-            "model": schemas.Message,
+            "model": schemas.FruitResponse,
             "description": "Resource not created, due to reasons clarified in message"
             },
         status.HTTP_404_NOT_FOUND: {
-            "model": schemas.Message,
+            "model": schemas.FruitResponse,
             "description": "Requested resource not found"
             },
         status.HTTP_403_FORBIDDEN: {
-            "model": schemas.Message,
+            "model": schemas.FruitResponse,
             "description": "Not enough permissions to access resource"
             },
         status.HTTP_401_UNAUTHORIZED: {
-            "model": schemas.Message,
+            "model": schemas.FruitResponse,
             "description": "Not authorized, please provide Authorization header"
             },
         },
@@ -81,19 +82,19 @@ RESPONSES = {
             "description": "Resource deleted"
             },
         status.HTTP_400_BAD_REQUEST: {
-            "model": schemas.Message,
+            "model": schemas.FruitResponse,
             "description": "Resource not deleted, due to reasons clarified in message"
             },
         status.HTTP_404_NOT_FOUND: {
-            "model": schemas.Message,
+            "model": schemas.FruitResponse,
             "description": "Requested resource not found"
             },
         status.HTTP_403_FORBIDDEN: {
-            "model": schemas.Message,
+            "model": schemas.FruitResponse,
             "description": "Not enough permissions to access resource"
             },
         status.HTTP_401_UNAUTHORIZED: {
-            "model": schemas.Message,
+            "model": schemas.FruitResponse,
             "description": "Not authorized, please provide Authorization header"
             }
         }
