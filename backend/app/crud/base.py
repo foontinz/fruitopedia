@@ -1,19 +1,30 @@
 from typing import Generic, TypeVar, Type
-from sqlalchemy.orm import Session
-from copy import copy
-from app.db.base_class import Base
-from pydantic import BaseModel
 
+from sqlalchemy.orm import Session
+
+from app.db.base_class import Base
+from app.schemas.commons import (
+    Read, ReadAll, Create, Update, Delete, 
+    BaseResponse, ReadQueryParams
+)
 
 ModelType = TypeVar("ModelType", bound=Base)
+ObjectSchemaType = TypeVar("ObjectSchemaType", bound=Base)
 
-CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
-ReadSchemaType = TypeVar("ReadSchemaType", bound=BaseModel)
-ReadAllSchemaType = TypeVar("ReadAllSchemaType", bound=BaseModel)
-UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
-DeleteSchemaType = TypeVar("DeleteSchemaType", bound=BaseModel)
+CreateSchemaType = TypeVar("CreateSchemaType", bound=Create)
+ReadSchemaType = TypeVar("ReadSchemaType", bound=Read)
+ReadAllSchemaType = TypeVar("ReadAllSchemaType", bound=ReadAll)
+ReadMultiSchemaType = TypeVar("ReadMultiSchemaType", bound=ReadAll)
+UpdateSchemaType = TypeVar("UpdateSchemaType", bound=Update)
+DeleteSchemaType = TypeVar("DeleteSchemaType", bound=Delete)
 
-class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, ReadAllSchemaType, UpdateSchemaType, DeleteSchemaType]):
+ResponseSchemaType = TypeVar("ResponseSchemaType", bound=BaseResponse)
+MultiResponseSchemaType = TypeVar("MultiResponseSchemaType", bound=BaseResponse)
+
+class CRUDBase(Generic[ModelType, ObjectSchemaType, CreateSchemaType, 
+                       ReadSchemaType, ReadMultiSchemaType, ReadAllSchemaType, 
+                       UpdateSchemaType, DeleteSchemaType, 
+                       ResponseSchemaType, MultiResponseSchemaType]):
     def __init__(self, model: Type[ModelType]) -> None:
         self.model = model
     
@@ -44,7 +55,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, ReadAllSchem
     :param limit: The number of records to return
     :return: The read records
     '''
-    def read_multi(self, db: Session, *, obj_in: ReadAllSchemaType) -> list[ModelType]:
+    def read_all(self, db: Session, *, obj_in: ReadAllSchemaType) -> list[ModelType]:
         return db.query(self.model).offset(obj_in.skip).limit(obj_in.limit).all()
 
     # '''Read a record from the database by OR(at least 1 fits ) fields from the schema 
@@ -54,6 +65,13 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, ReadAllSchem
     # def read_or(self, db: Session, *, obj_in: ReadSchemaType) -> ModelType | None:
     #     criteries = [getattr(User, k) == v for k, v in obj_in.dict(exclude_unset=True, exclude_none=True).items()]
     #     return db.query(self.model).filter(or_(*criteries)).first()
+
+    '''Read all the records from the database by ids field from the schema 
+    :param db: The database session
+    :param obj_in: The data used to read the record
+    '''
+    def read_multi(self, db: Session, *, obj_in: ReadMultiSchemaType) -> list[ModelType]:
+        return db.query(self.model).filter(self.model.id.in_(obj_in.ids)).all()
 
     '''Update a record in the database
     :param db: The database session
@@ -80,3 +98,18 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, ReadSchemaType, ReadAllSchem
         db.delete(obj)
         db.commit()
         return db.query(self.model).filter(self.model.id == obj_in.id).first()
+    
+    '''
+    Converts a Object model to Response object
+    :param obj: The ORM model object to convert
+    :param fields: The fields to include in the response    
+    '''
+    def model_to_response_body(self, *, obj: ModelType, params: ReadQueryParams) -> ResponseSchemaType:
+        return ResponseSchemaType(
+                data=ObjectSchemaType.construct(
+            **ObjectSchemaType.from_orm(obj).dict(include=params.fields)))
+    
+    def model_to_multi_response_body(self, *, objs: list[ModelType], params: ReadQueryParams) -> MultiResponseSchemaType:
+        return ResponseSchemaType(
+                data=[
+            ObjectSchemaType.construct(**ObjectSchemaType.from_orm(obj).dict(include=params.fields)) for obj in objs])
